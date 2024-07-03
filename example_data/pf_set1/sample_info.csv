@@ -1,0 +1,7 @@
+﻿barcode,sample_id,strain,parasitemia,swga,panel,program
+barcode09,3D7_10000,3D7,10000,phi29,nomads-mvp,3step
+barcode10,3D7_1000,3D7,1000,phi29,nomads-mvp,3step
+barcode11,3D7_100,3D7,100,phi29,nomads-mvp,3step
+barcode12,Dd2_1000,Dd2,1000,phi29,nomads-mvp,3step
+barcode13,HB3_1000,HB3,1000,phi29,nomads-mvp,3step
+barcode14,NTC,,0,phi29,nomads-mvp,3step
