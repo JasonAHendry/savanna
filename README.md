@@ -1,25 +1,33 @@
 # savanna
 ## Overview
-`nomadic3` supports real-time mapping and analysis of amplicon-based nanopore sequencing, rendering the data to a browser-based dashboard.
+`savanna` supports in-depth analysis of nanopore amplicon sequencing data.
 
 ## Install
 
 #### Requirements
-
-To install `nomadic3`, you will need:
+To install `savanna`, you will need:
 - The version control software [git](https://github.com/git-guides/install-git)
 - The package manager [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) or [mamba](https://mamba.readthedocs.io/en/latest/installation.html) 
   - Mamba is faster and is recommended
 
 #### Steps
-
 **1.  Clone the repository:**
 ```
 git clone https://github.com/JasonAHendry/nomadic3.git
 cd nomadic3
 ```
 \
-**2.  Install the depedendencies with conda:**
+**2. Install `dorado`.**
+Follow the installation instructions [here](https://github.com/nanoporetech/dorado).
+- The `Dorado` wrapper will automatically download the appropriate basecalling models for you
+\
+
+**3. Install `guppy`.**
+\
+`dorado` does not currently support higher stringency demultiplexing, so we are still using `guppy`. In order to install `guppy`, you need to log onto the [nanopore community](https://community.nanoporetech.com) and naviigate to the Software  Downlaods section. At the bottom of the paged in Archived Software, you wll see Guppy v6.5.7 available for download.
+
+\
+**4.  Install other depedendencies with conda:**
 ```
 conda env create -f environments/run.yml
 ```
@@ -28,15 +36,15 @@ or equivalently, with mamba:
 mamba env create -f environments/run.yml
 ```
 \
-**3. Install `nomadic3` and remaining dependencies:**
+**5. Install `savanna` and remaining dependencies:**
 ```
 pip install -e .
 ```
 \
-**4. Test your installation.**
+**6. Test your installation.**
 In the terminal, you should see available commands by typing:
 ```
-nomadic --help
+savanna --help
 ```
 
 
@@ -44,9 +52,9 @@ nomadic --help
 
 **A. Download your reference genome** 
 
-`nomadic3` performs real-time mapping to a reference genome. Start by downloading the reference genome for your target organism, e.g.:
+`savanna` performs real-time mapping to a reference genome. Start by downloading the reference genome for your target organism, e.g.:
 ```
-nomadic download -r Pf3D7
+savanna gather -r Pf3D7
 ```
 For the 3D7 reference genome of *P. falciparum*.
 
@@ -56,25 +64,15 @@ For the 3D7 reference genome of *P. falciparum*.
 Once sequencing has started, you can perform real-time analysis using the `nomadic realtime` command as follows:
 
 ```
-nomadic realtime \
+savanna run \
  -e <your_experiment_name> \
- -f <path/to/fastq_pass> \
  -m <path/to/metadata.csv> \
  -b <path/to/your_regions.bed>
 ```
 
-Once you run this command, you should get a dashboard link in your terminal, something like:
-
-```
-Dash is running on http://127.0.0.1:8050/
-```
-
-Copy and paste the link `http://127.0.0.1:8050/` into your web browser to view the dashboard. 
-
 \
 Flag information:
 - `-e`: Your experiment name. For example, '2023-06-12_seq-nomads8'. This is used to create the output directory.
-- `-f`: Path to the `fastq_pass` directory that will be created by `MinKNOW` or `Guppy`. If your experiment has multiple samples, this folder will typically contain folders for each sample, inside of which there are `.fastq` or `.fastq.gz` files.
 - `-m`: Path to a metadata CSV file. 
   - This file *must* have a `barcode` and `sample_id` column.
   - Both `barcode` and `sample_id` columns must have only unique entries.
