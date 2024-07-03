@@ -2,7 +2,7 @@ import os
 import json
 from typing import List
 
-from .interface import BarcodeAnalysis
+from savanna.run.barcode._interface import BarcodeAnalysis
 
 
 class BarcodeFASTQCounter(BarcodeAnalysis):

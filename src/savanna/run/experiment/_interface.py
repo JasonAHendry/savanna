@@ -2,7 +2,7 @@ import os
 from typing import List, Dict, Union
 from abc import ABC, abstractmethod
 
-from savanna.run.barcode.interface import BarcodeAnalysis
+from savanna.run.barcode._interface import BarcodeAnalysis
 from savanna.util.metadata import MetadataTableParser, check_barcode_format
 from savanna.util.dirs import ExperimentDirectories
 

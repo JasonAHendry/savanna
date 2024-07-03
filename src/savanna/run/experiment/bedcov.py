@@ -3,8 +3,8 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 
-from .interface import ExperimentAnalysis
-from savanna.run.barcode.interface import BarcodeAnalysis
+from savanna.run.experiment._interface import ExperimentAnalysis
+from savanna.run.barcode._interface import BarcodeAnalysis
 from savanna.run.barcode.bedcov import BarcodeBEDCoverage
 from savanna.util.metadata import MetadataTableParser
 from savanna.util.dirs import ExperimentDirectories

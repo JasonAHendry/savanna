@@ -4,7 +4,7 @@ from typing import List
 from abc import ABC, abstractmethod
 
 from savanna.gather.references import PlasmodiumFalciparum3D7, HomoSapiens
-from .interface import BarcodeAnalysis
+from savanna.run.barcode._interface import BarcodeAnalysis
 
 
 # This is a reasonably large file.

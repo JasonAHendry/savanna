@@ -3,9 +3,9 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 
-from savanna.run.barcode.interface import BarcodeAnalysis
+from savanna.run.barcode._interface import BarcodeAnalysis
 
-from .interface import ExperimentAnalysis
+from ._interface import ExperimentAnalysis
 from savanna.run.barcode.fastq import BarcodeFASTQCounter
 
 # Update to work with new interface
