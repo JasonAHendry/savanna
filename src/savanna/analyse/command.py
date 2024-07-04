@@ -1,6 +1,8 @@
 import click
 
+
 PIPELINES = ["plasmo", "ento"]
+
 
 @click.command(short_help="Per-sample FASTQ to results.")
 @click.option(
@@ -37,11 +39,29 @@ PIPELINES = ["plasmo", "ento"]
     type=click.Choice(PIPELINES),
     default=PIPELINES[0],
     show_default=True,
-    help="Set the pipeline to be run."
+    help="Set the pipeline to be run.",
 )
-def analyse(expt_name, fastq_dir, metadata_csv, region_bed, pipeline):
-    
+@click.option(
+    "-b",
+    "--barcode",
+    type=int,
+    required=False,
+    help="Optionally run the pipeline for only one barcode (e.g. --barcode 3).",
+)
+@click.option(
+    "-s",
+    "--summary_only",
+    type=bool,
+    is_flag=True,
+    default=False,
+    help="Optionally only summarise existing results across barcodes.",
+)
+def analyse(
+    expt_name, fastq_dir, metadata_csv, region_bed, pipeline, barcode, summary_only
+):
+
     from .main import main
 
-    main(expt_name, fastq_dir, metadata_csv, region_bed, pipeline)
-
+    main(
+        expt_name, fastq_dir, metadata_csv, region_bed, pipeline, barcode, summary_only
+    )

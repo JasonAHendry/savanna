@@ -15,12 +15,12 @@ class ExperimentMapToReference(ExperimentAnalysis):
         expt_dirs: ExperimentDirectories,
         metadata: MetadataTableParser,
         reference: Reference,
-        only_barcode: str = None,
-        only_summary: bool = False,
+        barcode: str = None,
+        summary_only: bool = False,
         make_plot: bool = True,
     ):
         self.reference = reference
-        super().__init__(expt_dirs, metadata, only_barcode, only_summary, make_plot)
+        super().__init__(expt_dirs, metadata, barcode, summary_only, make_plot)
 
     def _get_barcode_analysis(self, barcode_name: str) -> BarcodeAnalysis:
         return BarcodeMapToReference(barcode_name, self.expt_dirs, self.reference)

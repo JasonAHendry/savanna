@@ -18,13 +18,13 @@ class ExperimentBedCoverage(ExperimentAnalysis):
         metadata: MetadataTableParser,
         regions: RegionBEDParser,
         reference: Reference = PlasmodiumFalciparum3D7(),
-        only_barcode: str = None,
-        only_summary: bool = False,
+        barcode: str = None,
+        summary_only: bool = False,
         make_plot: bool = True,
     ):
         self.regions = regions
         self.reference = reference
-        super().__init__(expt_dirs, metadata, only_barcode, only_summary, make_plot)
+        super().__init__(expt_dirs, metadata, barcode, summary_only, make_plot)
 
     def _get_barcode_analysis(self, barcode_name: str) -> BarcodeAnalysis:
         return BarcodeBEDCoverage(
@@ -57,47 +57,3 @@ class ExperimentBedCoverage(ExperimentAnalysis):
             pad_inches=0.5,
         )
 
-
-# class ExperimentBedCoverage(ExperimentAnalysis):
-#     def __init__(
-#         self,
-#         expt_dirs: ExperimentDirectories,
-#         metadata: MetadataTableParser,
-#         regions: RegionBEDParser,
-#         make_plot: bool = True,
-#     ):
-#         self.regions = regions
-#         super().__init__(expt_dirs, metadata, make_plot)
-
-#     def _run(self):
-#         self.outputs = []
-#         for b in self.metadata.barcodes:
-#             analysis = BarcodeBEDCoverage(b, self.expt_dirs, regions=self.regions)
-#             success = analysis.run()
-#             if success:
-#                 self.outputs.append(analysis.output_csv)
-
-#     def _summarise(self):
-#         """Combine into a single CSV"""
-
-#         bedcov_dfs = []
-#         for output_csv in self.outputs:
-#             bedcov_dfs.append(pd.read_csv(output_csv))
-#         bedcov_df = pd.concat(bedcov_dfs)
-#         df_path = f"{self.expt_dirs.approach_dir}/summary.bedcov.csv"
-#         bedcov_df.to_csv(df_path, index=False)
-
-#         # barcode_dir = self.expt_dirs.get_barcode_dir(b)
-#         # try:
-#         #     df = pd.read_csv(f"{barcode_dir}/bedcov/{b}.{self.ref_name}.bedcov.csv")
-#         #     bedcov_dfs.append(df)
-#         # except FileNotFoundError:
-#         #     continue
-
-#     def _plot(self):
-#         fig, ax = plt.subplots(1, 1, figsize=(4, 8))
-
-
-#         #fig, ax = plt.subplots(1, 1, figsize=(6, 6))
-
-#         # Could merge with sample id

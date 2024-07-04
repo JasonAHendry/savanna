@@ -85,8 +85,8 @@ class ExperimentAnalysis(ABC):
         self,
         expt_dirs: ExperimentDirectories,
         metadata: MetadataTableParser,
-        only_barcode: str = None,
-        only_summary: bool = False,
+        barcode: str = None,
+        summary_only: bool = False,
         make_plot: bool = True,
     ):
 
@@ -95,28 +95,28 @@ class ExperimentAnalysis(ABC):
         self.metadata = metadata
 
         # Behaviour modifiers
-        self.only_barcode = self._set_only_barcode(only_barcode)
-        self.only_summary = only_summary
+        self.barcode = self._set_barcode(barcode)
+        self.summary_only = summary_only
         self.make_plot = make_plot
 
         # Object pointing to expected results
         self.results = None
 
-    def _set_only_barcode(self, only_barcode: str):
+    def _set_barcode(self, barcode: str):
         """
-        Check that the `only_barcode` argument conforms to a valid
+        Check that the `barcode` argument conforms to a valid
         barcode within the metadata
 
         """
-        if only_barcode in [None, "unclassified"]:
-            return only_barcode
+        if barcode in [None, "unclassified"]:
+            return barcode
 
-        only_barcode = check_barcode_format(only_barcode, try_to_fix=True)
-        if not only_barcode in self.metadata.barcodes:
+        barcode = check_barcode_format(barcode, try_to_fix=True)
+        if not barcode in self.metadata.barcodes:
             raise ValueError(
-                f"Barcode {only_barcode} cannot be analysed, it is not in {self.metadata.csv}"
+                f"Barcode {barcode} cannot be analysed, it is not in {self.metadata.csv}"
             )
-        return only_barcode
+        return barcode
 
     @abstractmethod
     def _get_barcode_analysis(self, barcode_name: str) -> BarcodeAnalysis:
@@ -162,9 +162,9 @@ class ExperimentAnalysis(ABC):
         """
 
         # Run analysis for a set of barcodes
-        if not self.only_summary:
-            if self.only_barcode is not None:
-                self._run([self.only_barcode])
+        if not self.summary_only:
+            if self.barcode is not None:
+                self._run([self.barcode])
                 return
             self.results = self._run(self.metadata.barcodes)
 

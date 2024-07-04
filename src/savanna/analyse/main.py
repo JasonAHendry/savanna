@@ -6,7 +6,7 @@ from savanna.util.dirs import ExperimentDirectories
 from savanna.util.regions import RegionBEDParser
 from savanna.analyse.pipelines import PIPELINE_COLLECTION
 
-def main(expt_name: str, fastq_dir: str, metadata_csv: str, region_bed: str, pipeline: str):
+def main(expt_name: str, fastq_dir: str, metadata_csv: str, region_bed: str, pipeline: str, barcode: int, summary_only: bool):
     """
     Entry point for core analysis pipeline
 
@@ -23,6 +23,9 @@ def main(expt_name: str, fastq_dir: str, metadata_csv: str, region_bed: str, pip
     log.info(f"  Metadata (.csv): {metadata_csv}")
     log.info(f"  Regions (.bed): {region_bed}")
     log.info(f"  Pipeline: {pipeline}")
+    if barcode is not None:
+        log.info(f"  Processing exclusively barcode: {barcode}")
+    log.info(f"  Only producing summary: {summary_only}")
     log.info("Processing...")
 
     # PREPARE TO RUN
@@ -40,9 +43,8 @@ def main(expt_name: str, fastq_dir: str, metadata_csv: str, region_bed: str, pip
         expt_dirs,
         metadata,
         regions,
-        only_barcode=None,
-        only_summary=False,
-        make_plot=False,
+        barcode=barcode,
+        summary_only=summary_only
     )
     pipeline_runner.run()
 
