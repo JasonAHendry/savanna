@@ -122,6 +122,13 @@ class ExperimentAnalysis(ABC):
     def _get_barcode_analysis(self, barcode_name: str) -> BarcodeAnalysis:
         pass
 
+    def _collect_outputs(self, barcodes: List[str]) -> BarcodeAnalysisResults:
+        results = BarcodeAnalysisResults(barcodes)
+        for b in barcodes:
+            barcode_analysis = self._get_barcode_analysis(b)
+            results[b] = (barcode_analysis.outputs_exist, barcode_analysis.outputs)
+        return results
+
     def _run(self, barcodes: List[str]) -> BarcodeAnalysisResults:
         """
         Run a specific `BarcodeAnalysis` for a list of barcodes
@@ -140,10 +147,7 @@ class ExperimentAnalysis(ABC):
         for b in barcodes:
             barcode_analysis = self._get_barcode_analysis(b)
             s = barcode_analysis.run()
-            results[b] = (
-                s,
-                barcode_analysis.outputs,
-            )  # Would need to specify regardless
+            results[b] = (s, barcode_analysis.outputs)
         return results
 
     @abstractmethod
@@ -161,18 +165,14 @@ class ExperimentAnalysis(ABC):
 
         """
 
-        # Run analysis for a set of barcodes
-        if not self.summary_only:
+        if self.summary_only:
+            self.results = self._collect_outputs(self.metadata.barcodes)
+        else:
             if self.barcode is not None:
                 self._run([self.barcode])
-                return
+                return # we don't summarise if only one barcode was run.
             self.results = self._run(self.metadata.barcodes)
 
-        # Summarise across barcodes
-        # PROBLEM! self.results not populated unless run...
         self._summarise()
-
-        # Optionally plot
         if self.make_plot:
             self._plot()
-

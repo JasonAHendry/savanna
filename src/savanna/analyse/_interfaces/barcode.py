@@ -52,6 +52,14 @@ class BarcodeAnalysis(ABC):
         """
         pass
 
+    @property
+    def inputs_exist(self):
+        return all([os.path.exists(input) for input in self.inputs])
+
+    @property
+    def outputs_exist(self):
+        return all([os.path.exists(output) for output in self.outputs])
+
     @abstractmethod
     def _run(self) -> None:
         """
@@ -77,15 +85,18 @@ class BarcodeAnalysis(ABC):
         if self.inputs is None:
             raise RuntimeError("`self.inputs` must be defined.")
 
-        for input in self.inputs:
-            if not os.path.exists(input):
-                raise InputDoesNotExit(
-                    f"Input '{input}' does not exist, but is needed for {self.__class__.__name__} analysis."
-                )
+        if not self.inputs_exist:
+            for (
+                input
+            ) in self.inputs:  # verbose but important to have good feedback here
+                if not os.path.exists(input):
+                    raise InputDoesNotExit(
+                        f"Input '{input}' does not exist, but is needed for {self.__class__.__name__} analysis."
+                    )
 
     def run(self) -> bool:
         self._check_inputs()
         self._run()
         if self.make_plot:
             self._plot()
-        return True
+        return self.outputs_exist
