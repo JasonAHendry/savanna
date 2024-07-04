@@ -1,8 +1,7 @@
-import os
-from typing import List, Dict, Union
+from typing import List, Union
 from abc import ABC, abstractmethod
 
-from savanna.run.barcode._interface import BarcodeAnalysis
+from .barcode import BarcodeAnalysis
 from savanna.util.metadata import MetadataTableParser, check_barcode_format
 from savanna.util.dirs import ExperimentDirectories
 
@@ -24,7 +23,7 @@ class BarcodeAnalysisResults(dict):
     It can be used in the `def _summarise()` method to skip summarising
     failed barcodes, and to more easily get paths to output files.
 
-    ISSUE:
+    TODO BUG:
     - Currently, *only* generated if pipeline is run
 
     """
@@ -177,46 +176,3 @@ class ExperimentAnalysis(ABC):
         if self.make_plot:
             self._plot()
 
-
-# class ExperimentAnalysis(ABC):
-#     """
-#     Run an analysis for multiple barcodes across an experiment,
-#     and provide a summary
-
-#     TODO:
-#     - Want to be able to *not* run any barcode step (--summary)
-#     - Need to be able to run for a specific barcode (I think, -b <barcode_id>)
-#     - Should probably include a mechanism for checking the inputs
-
-#     """
-
-#     name = ""
-
-#     def __init__(
-#         self,
-#         expt_dirs: ExperimentDirectories,
-#         metadata: MetadataTableParser,
-#         make_plot: bool = True,
-#     ):
-#         self.expt_dirs = expt_dirs
-#         self.metadata = metadata
-#         self.make_plot = make_plot
-
-#     def _run(self):
-#         # We might want to only check if the outputs exist, if we run only_summary
-#         # for barcode in barcodes:
-#         #     step.run()
-#         pass
-
-#     @abstractmethod
-#     def _summarise(self):
-#         pass
-
-#     @abstractmethod
-#     def _plot(self):
-#         pass
-
-#     def run(self):
-#         self._run()
-#         self._summarise()
-#         self._plot()

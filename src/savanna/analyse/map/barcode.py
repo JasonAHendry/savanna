@@ -3,9 +3,8 @@ import subprocess
 from typing import List
 from abc import ABC, abstractmethod
 
-from savanna.gather.references import PlasmodiumFalciparum3D7, HomoSapiens
-from savanna.run.barcode._interface import BarcodeAnalysis
-
+from savanna.analyse._interfaces import BarcodeAnalysis
+from savanna.download.references import PlasmodiumFalciparum3D7, HomoSapiens
 
 # This is a reasonably large file.
 # At top, I have classes encapsulating mapping algorithms.

@@ -1,4 +1,6 @@
+import os
 import logging
+from savanna.util.dirs import produce_dir
 
 
 def config_root_logger(log_path: str, verbose=False):
@@ -27,6 +29,7 @@ def config_root_logger(log_path: str, verbose=False):
     logging.getLogger().addHandler(console_handler)  # adds to root
 
     # Add file handler
+    log_dir = produce_dir(os.path.dirname(log_path))
     file_handler = logging.FileHandler(log_path)
     file_formatter = logging.Formatter(FILE_FORMAT, DATE_FORMAT)
     file_handler.setFormatter(file_formatter)

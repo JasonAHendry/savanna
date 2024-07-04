@@ -1,6 +1,6 @@
 import pandas as pd
 from typing import List
-from savanna.run.barcode._interface import BarcodeAnalysis
+from savanna.analyse._interfaces import BarcodeAnalysis
 from savanna.util.dirs import ExperimentDirectories
 from savanna.util.regions import RegionBEDParser
 from savanna.wrappers import samtools

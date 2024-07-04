@@ -1,14 +1,13 @@
-import json
 import pandas as pd
-
 import matplotlib.pyplot as plt
+import seaborn as sns
 
-from savanna.run.experiment._interface import ExperimentAnalysis
-from savanna.run.barcode._interface import BarcodeAnalysis
-from savanna.run.barcode.bedcov import BarcodeBEDCoverage
 from savanna.util.metadata import MetadataTableParser
 from savanna.util.dirs import ExperimentDirectories
 from savanna.util.regions import RegionBEDParser
+
+from savanna.analyse._interfaces import BarcodeAnalysis, ExperimentAnalysis
+from .barcode import BarcodeBEDCoverage
 
 
 class ExperimentBedCoverage(ExperimentAnalysis):
@@ -40,11 +39,21 @@ class ExperimentBedCoverage(ExperimentAnalysis):
         self.bedcov_df.to_csv(df_path, index=False)
 
     def _plot(self):
-        fig, ax = plt.subplots(1, 1, figsize=(4, 8))
+        fig, ax = plt.subplots(1, 1, figsize=(4, 6))
 
-        self.bedcov_df.index = self.bedcov_df["barcode"]
-        self.bedcov_df[["mean_cov", "n_reads"]].plot(lw=0, marker="o", ax=ax)
-        fig.savefig(f"{self.expt_dirs.approach_dir}/plot.bedcov.pdf")
+        sns.stripplot(
+            y="barcode",
+            x="mean_cov",
+            hue="name",
+            jitter=True,
+            data=self.bedcov_df
+        )
+        ax.legend(bbox_to_anchor=(1, 1))
+
+        fig.savefig(f"{self.expt_dirs.approach_dir}/plot.bedcov.pdf",
+                    bbox_inches="tight",
+                    pad_inches=0.5
+                    )
 
 
 # class ExperimentBedCoverage(ExperimentAnalysis):
