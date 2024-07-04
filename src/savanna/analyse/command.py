@@ -1,7 +1,6 @@
 import click
 
-# TODO:
-# - Reference genome
+PIPELINES = ["plasmo", "ento"]
 
 @click.command(short_help="Per-sample FASTQ to results.")
 @click.option(
@@ -26,15 +25,23 @@ import click
     help="Path to metadata CSV file containing barcode and sample information.",
 )
 @click.option(
-    "-b",
+    "-r",
     "--region_bed",
     type=str,
     required=True,
     help="Path to BED file specifying genomic regions of interest.",
 )
-def analyse(expt_name, fastq_dir, metadata_csv, region_bed):
+@click.option(
+    "-p",
+    "--pipeline",
+    type=click.Choice(PIPELINES),
+    default=PIPELINES[0],
+    show_default=True,
+    help="Set the pipeline to be run."
+)
+def analyse(expt_name, fastq_dir, metadata_csv, region_bed, pipeline):
     
     from .main import main
 
-    main(expt_name, fastq_dir, metadata_csv, region_bed)
+    main(expt_name, fastq_dir, metadata_csv, region_bed, pipeline)
 
