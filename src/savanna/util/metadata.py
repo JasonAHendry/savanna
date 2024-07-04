@@ -108,6 +108,10 @@ class MetadataTableParser:
         if include_unclassified:
             self.barcodes.append("unclassified")
 
+    @property
+    def n_barcodes(self):
+        return  len(self.barcodes)
+
     def _check_for_columns(self):
         """
         Check the correct columns are present
