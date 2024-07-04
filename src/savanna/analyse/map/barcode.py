@@ -4,7 +4,8 @@ from typing import List
 from abc import ABC, abstractmethod
 
 from savanna.analyse._interfaces import BarcodeAnalysis
-from savanna.download.references import PlasmodiumFalciparum3D7, HomoSapiens
+from savanna.util.dirs import ExperimentDirectories
+from savanna.download.references import Reference, PlasmodiumFalciparum3D7, HomoSapiens
 
 # This is a reasonably large file.
 # At top, I have classes encapsulating mapping algorithms.
@@ -183,6 +184,57 @@ MAPPER_COLLECTION = {"minimap2": Minimap2, "bwa": BwaMem}
 
 # Start of  drafting specific, can add generality later if needed
 # Generality would be good actually..
+
+
+class BarcodeMapToReference(BarcodeAnalysis):
+    """
+    Map reads to a single reference genome
+
+    """
+
+    name = "bams"
+
+    def __init__(
+        self,
+        barcode_name: str,
+        expt_dirs: ExperimentDirectories,
+        reference: Reference,
+        make_plot: bool = True,
+    ):
+        self.reference = reference
+        super().__init__(barcode_name, expt_dirs, make_plot)
+
+    def _define_inputs(self) -> List[str]:
+        self.fastq_dir = f"{self.expt_dir.demux_dir}/{self.barcode_name}"
+        self.fasta_path = self.reference.fasta_path
+        return [self.fastq_dir, self.fasta_path]
+
+    def _define_outputs(self) -> List[str]:
+        self.output_bam = (
+            f"{self.output_dir}/{self.barcode_name}.{self.reference.name}.bam"
+        )
+        return [self.output_bam]
+
+    def _run(self):
+        """
+        Run mapping from FASTQ data using Minimap2
+
+        """
+
+        # Confirm reference genome downloaded
+        self.reference.confirm_downloaded()
+
+        # Prepare the mapper
+        mapper = Minimap2(fasta_path=self.fasta_path, fastq_dir=self.fastq_dir)
+
+        # Run
+        mapper.run(self.output_bam)
+        mapper.index()
+
+    def _plot(self):
+        pass
+
+
 class BarcodeMapToPfalciparum(BarcodeAnalysis):
     """
     Map reads from FASTQ data
