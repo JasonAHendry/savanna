@@ -1,10 +1,8 @@
-from savanna.run.experiment._interface import ExperimentAnalysis
-from savanna.run.barcode._interface import BarcodeAnalysis
-from savanna.run.barcode.map import (
+from savanna.analyse._interfaces import BarcodeAnalysis, ExperimentAnalysis
+from .barcode import (
     BarcodeMapToPfalciparum,
     BarcodeMapUnmappedToHSapiens,
 )
-
 
 class ExperimentMapToPfalciparum(ExperimentAnalysis):
     def _get_barcode_analysis(self, barcode_name: str) -> BarcodeAnalysis:

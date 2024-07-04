@@ -1,7 +1,9 @@
 import click
 
+# TODO:
+# - Reference genome
 
-@click.command(short_help="Run analysis pipeline.")
+@click.command(short_help="Per-sample FASTQ to results.")
 @click.option(
     "-e",
     "--expt_name",
@@ -14,7 +16,7 @@ import click
     "--fastq_dir",
     type=str,
     required=True,
-    help="Path to `fastq_pass` directory produced by MinKNOW or Guppy.",
+    help="Path to directory containing demultiplexed FASTQ files (e.g. '<path>/<to>/fastq_pass'). Typically produced by MinKNOW, dorado, guppy or with savanna demultiplex.",
 )
 @click.option(
     "-m",
@@ -30,7 +32,9 @@ import click
     required=True,
     help="Path to BED file specifying genomic regions of interest.",
 )
-def run(expt_name, fastq_dir, metadata_csv, region_bed):
+def analyse(expt_name, fastq_dir, metadata_csv, region_bed):
+    
     from .main import main
 
     main(expt_name, fastq_dir, metadata_csv, region_bed)
+

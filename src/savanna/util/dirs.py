@@ -57,6 +57,7 @@ class ExperimentDirectories:
         expt_name: str,
         metadata: MetadataTableParser = None,
         regions: RegionBEDParser = None,
+        fastq_dir: str = None,
         approach_name: str = "",
     ):
         """
@@ -73,7 +74,10 @@ class ExperimentDirectories:
 
         # Output for basecalling & demultiplexing
         self.basecall_dir = produce_dir(self.approach_dir, "basecall")
-        self.demux_dir = produce_dir(self.approach_dir, "demux")
+        if fastq_dir is not None:
+            self.demux_dir = fastq_dir
+        else:
+            self.demux_dir = produce_dir(self.approach_dir, "demux")
 
         # Setup metadata
         self.metadata_dir = produce_dir(self.expt_dir, "metadata")
