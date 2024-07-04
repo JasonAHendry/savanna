@@ -6,6 +6,9 @@ from .metadata import MetadataTableParser
 from .regions import RegionBEDParser
 
 
+ROOT_DIR = Path(__file__).absolute().parent.parent.parent.parent
+
+
 def produce_dir(*args):
     """
     Produce a new directory by concatenating `args`,
@@ -47,7 +50,6 @@ class ExperimentDirectories:
 
     """
 
-    ROOT_DIR = Path(__file__).absolute().parent.parent.parent.parent
     results_dir = produce_dir(ROOT_DIR, "results")
 
     def __init__(
