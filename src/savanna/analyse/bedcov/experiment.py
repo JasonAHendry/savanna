@@ -7,6 +7,7 @@ from savanna.util.dirs import ExperimentDirectories
 from savanna.util.regions import RegionBEDParser
 
 from savanna.analyse._interfaces import BarcodeAnalysis, ExperimentAnalysis
+from savanna.download.references import Reference, PlasmodiumFalciparum3D7
 from .barcode import BarcodeBEDCoverage
 
 
@@ -16,15 +17,19 @@ class ExperimentBedCoverage(ExperimentAnalysis):
         expt_dirs: ExperimentDirectories,
         metadata: MetadataTableParser,
         regions: RegionBEDParser,
+        reference: Reference = PlasmodiumFalciparum3D7(),
         only_barcode: str = None,
         only_summary: bool = False,
         make_plot: bool = True,
     ):
         self.regions = regions
+        self.reference = reference
         super().__init__(expt_dirs, metadata, only_barcode, only_summary, make_plot)
 
     def _get_barcode_analysis(self, barcode_name: str) -> BarcodeAnalysis:
-        return BarcodeBEDCoverage(barcode_name, self.expt_dirs, self.regions)
+        return BarcodeBEDCoverage(
+            barcode_name, self.expt_dirs, self.regions, self.reference
+        )
 
     def _summarise(self):
         """Combine into a single CSV"""
@@ -42,18 +47,15 @@ class ExperimentBedCoverage(ExperimentAnalysis):
         fig, ax = plt.subplots(1, 1, figsize=(4, 6))
 
         sns.stripplot(
-            y="barcode",
-            x="mean_cov",
-            hue="name",
-            jitter=True,
-            data=self.bedcov_df
+            y="barcode", x="mean_cov", hue="name", jitter=True, data=self.bedcov_df
         )
         ax.legend(bbox_to_anchor=(1, 1))
 
-        fig.savefig(f"{self.expt_dirs.approach_dir}/plot.bedcov.pdf",
-                    bbox_inches="tight",
-                    pad_inches=0.5
-                    )
+        fig.savefig(
+            f"{self.expt_dirs.approach_dir}/plot.bedcov.pdf",
+            bbox_inches="tight",
+            pad_inches=0.5,
+        )
 
 
 # class ExperimentBedCoverage(ExperimentAnalysis):

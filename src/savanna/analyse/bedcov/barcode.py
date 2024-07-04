@@ -3,12 +3,14 @@ from typing import List
 from savanna.analyse._interfaces import BarcodeAnalysis
 from savanna.util.dirs import ExperimentDirectories
 from savanna.util.regions import RegionBEDParser
+from savanna.download.references import Reference, PlasmodiumFalciparum3D7
 from savanna.wrappers import samtools
 
 
 class BarcodeBEDCoverage(BarcodeAnalysis):
     """
-    Count the number or FASTQ files generated for a particular barcode
+    Compute coverage summary statistics from a BAM file over
+    regions defined in a BED file
 
     """
 
@@ -19,35 +21,24 @@ class BarcodeBEDCoverage(BarcodeAnalysis):
         barcode_name: str,
         expt_dirs: ExperimentDirectories,
         regions: RegionBEDParser,
+        reference: Reference = PlasmodiumFalciparum3D7(),
         make_plot: bool = True,
     ):
         self.regions = regions
+        self.reference = reference
         super().__init__(barcode_name, expt_dirs, make_plot)
 
     def _define_inputs(self):
-        """
-        Check that the expected input directory is present
-
-        """
-
-        self.bam_path = f"{self.barcode_dir}/bams/{self.barcode_name}.Pf3D7.bam"
-
+        self.bam_path = (
+            f"{self.barcode_dir}/bams/{self.barcode_name}.{self.reference.name}.bam"
+        )
         return [self.bam_path, self.regions.path]
 
     def _define_outputs(self) -> List[str]:
-
-        self.output_csv = f"{self.output_dir}/table.bedcov.csv"
-
+        self.output_csv = f"{self.output_dir}/table.bedcov.csv"  # may want more here
         return [self.output_csv]
 
     def _run(self):
-        """
-        Count the number of fastq_files
-
-        """
-
-        # Run `samtools bedcov`
-
         samtools.bedcov(
             bam_path=self.bam_path,
             bed_path=self.regions.path,
