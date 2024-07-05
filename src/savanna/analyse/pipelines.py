@@ -13,6 +13,7 @@ from savanna.analyse.map.experiment import (
     ExperimentMapToReference,
 )
 from savanna.analyse.bedcov.experiment import ExperimentBedCoverage
+from savanna.analyse.bamstats.experiment import ExperimentBamStats
 
 
 class Pipeline(ABC):
@@ -70,6 +71,15 @@ class PlasmoPipeline(Pipeline):
         )
         mapper.run()
 
+        print("BAM statistics...")
+        bamstats = ExperimentBamStats(
+            self.expt_dirs,
+            self.metadata,
+            self.reference,
+            **self.kwargs
+        )
+        bamstats.run()
+
         print("Coverage...")
         bedcov = ExperimentBedCoverage(
             self.expt_dirs,
@@ -79,6 +89,8 @@ class PlasmoPipeline(Pipeline):
             **self.kwargs,
         )
         bedcov.run()
+        
+
 
 
 class EntoPipeline(Pipeline):
