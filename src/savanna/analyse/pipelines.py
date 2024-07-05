@@ -14,6 +14,7 @@ from savanna.analyse.map.experiment import (
 )
 from savanna.analyse.bedcov.experiment import ExperimentBedCoverage
 from savanna.analyse.bamstats.experiment import ExperimentBamStats
+from savanna.analyse.call.experiment import ExperimentCallWithBcftools
 
 
 class Pipeline(ABC):
@@ -89,6 +90,18 @@ class PlasmoPipeline(Pipeline):
             **self.kwargs,
         )
         bedcov.run()
+
+        print("Variant calling...")
+        call = ExperimentCallWithBcftools(
+            self.expt_dirs,
+            self.metadata,
+            self.regions,
+            self.reference,
+            **self.kwargs,
+        )
+        call.run()
+
+        print("Done.")
         
 
 
