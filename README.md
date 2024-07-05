@@ -3,7 +3,17 @@
 `savanna` supports in-depth analysis of nanopore amplicon sequencing data.
 
 ## Install
+### Docker
+```
+docker pull jasonahendry/savanna:0.0
+```
+This will download an image that already has `dorado`, `savanna`, and all dependencies pre-installed. Unfortunately it is a bit more cumbersome to run from the command line:
 
+```
+docker run -w `pwd` -v `pwd`:`pwd` jasonahendry/dorado:0.0 savanna
+```
+
+### From source
 #### Requirements
 To install `savanna`, you will need:
 - The version control software [git](https://github.com/git-guides/install-git)
@@ -47,27 +57,25 @@ In the terminal, you should see available commands by typing:
 savanna --help
 ```
 
-
 ## Basic usage
-
-**A. Download your reference genome** 
-
-`savanna` performs real-time mapping to a reference genome. Start by downloading the reference genome for your target organism, e.g.:
+First, download your desired reference genome. For example...
 ```
-savanna gather -r Pf3D7
+savanna download -r Pf3D7
 ```
-For the 3D7 reference genome of *P. falciparum*.
+downloads 3D7 reference genome of *P. falciparum*.
 
-\
-**B. Run `nomadic realtime`**
-
-Once sequencing has started, you can perform real-time analysis using the `nomadic realtime` command as follows:
-
+Basecall data using dorado with the command:
 ```
-savanna run \
+savanna basecall
+```
+
+Analyse demultiplexed FASTQ data with the command:
+```
+savanna analyse \
  -e <your_experiment_name> \
  -m <path/to/metadata.csv> \
  -b <path/to/your_regions.bed>
+ --pipeline plasmo
 ```
 
 \
@@ -85,17 +93,5 @@ Flag information:
 For a full running example look at `scripts/run_realtime.sh`
 
 ## Testing
-I have created a script to simulate a small nanopore sequencing run, that allows you to test `nomadic3 realtime` without having an actual sequencing experiment running. To try this, first run: 
-
-```
-./scripts/run_realtime.sh
-```
-
-Then, in a second terminal window, and run:
-```
-python scripts/simulate_sequencing.py
-```
-
-
-
+Example data is present in [example_data](https://github.com/JasonAHendry/savanna/tree/master/example_data).
 
