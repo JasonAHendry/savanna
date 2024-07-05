@@ -1,4 +1,5 @@
 import os
+import shutil
 import click
 from pathlib import Path
 
@@ -7,10 +8,10 @@ BARCODING_KITS = ["SQK-NBD114-96", "SQK-RBK114-96"]
 PIPELINES = ["plasmo", "ento"]
 
 
-slurm_basecall = Path("slurm/templates/savanna-basecall.slurm")
-slurm_analyse = Path("slurm/templates/savanna-analyse.slurm")
-slurm_summary = Path("slurm/templates/savanna-summary.slurm")
-slurm_submit = Path("slurm/templates/savanna-submit.sh")
+slurm_basecall = Path("slurm/templates/basecall.slurm")
+slurm_analyse = Path("slurm/templates/analyse.slurm")
+slurm_summary = Path("slurm/templates/summary.slurm")
+slurm_submit = Path("slurm/templates/submit.sh")
 RUNS_DIR = Path("slurm/runs")
 
 
@@ -140,8 +141,9 @@ def main(
     submit_path = output_dir / slurm_submit.name
     load_format_write(slurm_submit, submit_path, run_dir=output_dir)
     submit_path.chmod(0o777)
+    shutil.copy(submit_path, "submit.sh") # for convenience
 
-    print(f"Final submission script written to: {submit_path}")
+    print(f"Final submission script written to: {submit_path} (and submit.sh)")
     print("Done.")
 
 
