@@ -90,6 +90,7 @@ class MetadataTableParser:
     """
 
     REQUIRED_COLUMNS = ["barcode", "sample_id"]
+    UNIQ_COLUMNS = ["barcode"] # allowing duplicated 'sample_id' for now.
 
     def __init__(self, metadata_csv: str, include_unclassified: bool = True):
         """
@@ -126,11 +127,9 @@ class MetadataTableParser:
         """
         Check entires of the required columns are unique
 
-        TODO: this will also disallow missing?
-
         """
 
-        for c in self.REQUIRED_COLUMNS:
+        for c in self.UNIQ_COLUMNS:
             all_entries = self.df[c].tolist()
             observed_entries = []
             for entry in all_entries:
