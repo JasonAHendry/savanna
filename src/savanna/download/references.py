@@ -1,6 +1,6 @@
 import os
-from savanna.util.exceptions import ReferenceGenomeMissingError
 from abc import ABC, abstractmethod
+from savanna.util.exceptions import ReferenceGenomeMissingError
 
 
 # ================================================================
@@ -226,8 +226,8 @@ class HomoSapiens(Reference):
 
 
 # ================================================================
-# Collection
-# Note they are already initialised
+# Reference collection
+#
 # ================================================================
 
 
