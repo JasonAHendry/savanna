@@ -1,4 +1,4 @@
-name: savanna
+name: base
 channels:
   - conda-forge
   - bioconda
@@ -10,7 +10,6 @@ dependencies:
   - htslib
   - bedtools
   - pysam
-  - jupyter
   - dash
   - pandas
   - numpy
@@ -20,4 +19,3 @@ dependencies:
   - black
   - flake8
   - pip
-  - pytest
