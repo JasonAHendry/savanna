@@ -61,6 +61,7 @@ def load_format_write(input_file: Path, output_file: Path, **kwargs) -> None:
     help="Path to BED file specifying genomic regions of interest.",
 )
 @click.option(
+    "-P",
     "--pipeline",
     type=click.Choice(PIPELINES),
     default=PIPELINES[0],
@@ -80,17 +81,30 @@ def main(
     from savanna.util.dirs import produce_dir, ExperimentDirectories
     from savanna.util.metadata import MetadataTableParser
 
+    # Fixed
+    include_unclassified = False
+    basecall_model = "sup"
+
+    print("Generating Slurm submission scripts...")
+    print(f"  POD5 directory: {pod5_dir}")
+    print(f"  Basecalling model: {basecall_model}")
+    print(f"  Barcoding Kit: {barcode_kit}")
+    print(f"  Experiment name: {expt_name}")
+    print(f"  Metadata CSV: {metadata_csv}")
+    print(f"  Regions BED: {region_bed}")
+    print(f"  Pipeline: {pipeline}")
+    print(f"  Include unclassified? {include_unclassified}")
+
     # Parse inputs
-    expt_dirs = ExperimentDirectories(
+    _ = ExperimentDirectories(
         expt_name
     )  # builds the output  directories; can help with races
-    metadata = MetadataTableParser(metadata_csv, include_unclassified=False)
-
-    print(f"Found {metadata.n_barcodes} barcodes to process...")
+    metadata = MetadataTableParser(metadata_csv, include_unclassified)
     array_str = ",".join([str(int(b[-2:])) for b in metadata.barcodes])
 
+    print(f"Found {metadata.n_barcodes} barcodes to process: {array_str}")
+
     # Prepare output directory
-    expt_dir = Path(expt_dirs.expt_dir)
     run_count = sum([1 for d in os.listdir(RUNS_DIR) if d.startswith(expt_name)])
     output_dir = Path(produce_dir(RUNS_DIR, f"{expt_name}-r{run_count}"))
 
@@ -99,7 +113,7 @@ def main(
         output_dir / slurm_basecall.name,
         expt_name=expt_name,
         pod5_dir=pod5_dir,
-        model="sup",
+        model=basecall_model,
         kit=barcode_kit,
         min_qscore=10,
     )
@@ -128,6 +142,7 @@ def main(
     submit_path.chmod(0o777)
 
     print(f"Final submission script written to: {submit_path}")
+    print("Done.")
 
 
 if __name__ == "__main__":
