@@ -87,6 +87,6 @@ def demultiplex(expt_name: str, fastq_dir: str, barcode_kit: str, tool: str, str
     print("Building basecaller...")
     demuxer = DEMUXER_COLLECTION[tool](fastq_dir=fastq_dir, kit=barcode_kit)
     print(demuxer.fastq_dir)
-    demuxer.run(output_dir=output_dir, strict=strict, dry_run=True)
+    demuxer.run(output_dir=output_dir, strict=strict, dry_run=False)
 
 
