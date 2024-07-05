@@ -71,7 +71,7 @@ def basecall(
 
     print(f"Loaded experiment: {expt_name}")
     expt_dirs = ExperimentDirectories(expt_name)
-    output_fastq = f"{expt_dirs.basecall_dir}/dorado.fastq.gz"
+    output_fastq = f"{expt_dirs.basecall_dir}/dorado.fastq"
     print(f"Output FASTQ: {output_fastq}")
 
     print("Runninng basecaller...")
