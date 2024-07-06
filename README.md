@@ -1,9 +1,17 @@
 # savanna
-## Overview
-`savanna` supports in-depth analysis of nanopore amplicon sequencing data.
+*Savanna* packages several bioinformatic pipelines for amplicon sequencing data generated with nanopore.
 
-## Install
+## Features
+* Basecalling with [*Dorado*](https://github.com/nanoporetech/dorado)
+* Sample demultiplexing with [*Dorado*](https://github.com/nanoporetech/dorado) or *Guppy*
+* Read mapping with [*Minimap2*](https://github.com/lh3/minimap2) and amplicon coverage evaluation
+* Variant calling
+
+## Installation
 ### Docker
+#### Requires
+* [*Docker*](https://www.docker.com/)
+#### Steps
 ```
 docker pull jasonahendry/savanna:0.0
 ```
@@ -14,17 +22,16 @@ docker run -w `pwd` -v `pwd`:`pwd` jasonahendry/dorado:0.0 savanna
 ```
 
 ### From source
-#### Requirements
-To install `savanna`, you will need:
-- The version control software [git](https://github.com/git-guides/install-git)
-- The package manager [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) or [mamba](https://mamba.readthedocs.io/en/latest/installation.html) 
+#### Requires
+- The version control software [*Git*](https://github.com/git-guides/install-git)
+- The package manager [*Conda*](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) or [*Mamba*](https://mamba.readthedocs.io/en/latest/installation.html) 
   - Mamba is faster and is recommended
 
 #### Steps
 **1.  Clone the repository:**
 ```
-git clone https://github.com/JasonAHendry/nomadic3.git
-cd nomadic3
+git clone https://github.com/JasonAHendry/savanna.git
+cd savanna
 ```
 \
 **2. Install `dorado`.**
@@ -90,7 +97,7 @@ Flag information:
   - This BED file *must* contain a forth column for region name information, and the names must be unique. They are used to generate plots and compute summary statistics.
   - See `example_data/beds/nomads8.amplicons.bed` for an example.
 
-For a full running example look at `scripts/run_realtime.sh`
+For a full running example look at [scripts/run_example.sh](https://github.com/JasonAHendry/savanna/blob/master/scripts/run_example.sh)
 
 ## Testing
 Example data is present in [example_data](https://github.com/JasonAHendry/savanna/tree/master/example_data).
