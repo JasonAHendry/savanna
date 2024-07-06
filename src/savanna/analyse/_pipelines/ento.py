@@ -20,5 +20,6 @@ class EntoPipeline(Pipeline):
         self._count_fastqs()
         self._map_to_reference(self.reference)
         self._calc_bamstat(self.reference)
+        self._filter_bam(self.reference)
         self._calc_bedcov(self.reference)
         self._call_with_bcftools(self.reference)

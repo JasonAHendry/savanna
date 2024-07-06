@@ -102,6 +102,16 @@ def flagstats(input_bam: str, output_json: str) -> None:
     os.remove(temp_json)
 
 
+def index(input_bam: str):
+    """
+    Run `samtools index`
+
+    """
+    
+    cmd = f" samtools index {input_bam}"
+    subprocess.run(cmd, check=True, shell=True)
+
+
 def mpileup(
     input_bam: str,
     ref_fasta: str,
@@ -132,3 +142,14 @@ def mpileup(
     cmd += f" {input_bam}"
 
     subprocess.run(cmd, shell=True, check=True)
+
+
+def view(input_bam: str, args: str, output_bam: str):
+    """
+    Run `samtools view` 
+    
+    """
+
+    cmd = f"samtools view {args} {input_bam} -b -o {output_bam}"
+    subprocess.run(cmd, shell=True, check=True)
+

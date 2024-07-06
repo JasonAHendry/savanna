@@ -30,7 +30,7 @@ class BarcodeBEDCoverage(BarcodeAnalysis):
 
     def _define_inputs(self):
         self.bam_path = (
-            f"{self.barcode_dir}/bams/{self.barcode_name}.{self.reference.name}.bam"
+            f"{self.barcode_dir}/bams/{self.barcode_name}.{self.reference.name}.filtered.bam"
         )
         return [self.bam_path, self.regions.path]
 

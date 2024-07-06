@@ -9,6 +9,7 @@ from savanna.analyse.fastq.experiment import ExperimentFASTQCount
 from savanna.analyse.map.experiment import ExperimentMapToReference
 from savanna.analyse.bedcov.experiment import ExperimentBedCoverage
 from savanna.analyse.bamstats.experiment import ExperimentBamStats
+from savanna.analyse.bamfilt.experiment import ExperimentFilterBAM
 from savanna.analyse.call.experiment import ExperimentCallWithBcftools
 
 log = logging.getLogger()
@@ -68,6 +69,15 @@ class Pipeline(ABC):
             self.expt_dirs, self.metadata, reference, **self.kwargs
         )
         mapper.run()
+        log.info("Done.")
+
+    def _filter_bam(self, reference: Reference) -> None:
+        log.info("Filtering BAM file")
+        log.info(f"  Reference: {reference.name}")
+        filter = ExperimentFilterBAM(
+            self.expt_dirs, self.metadata, self.reference, **self.kwargs
+        )
+        filter.run()
         log.info("Done.")
 
     def _calc_bamstat(self, reference: Reference) -> None:

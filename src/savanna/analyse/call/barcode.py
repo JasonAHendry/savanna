@@ -25,7 +25,7 @@ class CallWithBcftools(BarcodeAnalysis):
 
     def _define_inputs(self):
         self.bam_path = (
-            f"{self.barcode_dir}/bams/{self.barcode_name}.{self.reference.name}.bam"
+            f"{self.barcode_dir}/bams/{self.barcode_name}.{self.reference.name}.filtered.bam"
         )
         self.fasta_path = self.reference.fasta_path
         self.gff_path = self.reference.gff_standard_path
@@ -44,18 +44,13 @@ class CallWithBcftools(BarcodeAnalysis):
 
     def _run(self):
         caller = self.Caller(fasta_path=self.fasta_path)
-
-        print("Calling variants...")
         caller.run(self.bam_path, self.vcf, sample_name=self.barcode_name)
-
-        print("Filtering...")
         caller.filter(output_vcf=self.filtered_vcf, bed_path=self.regions.path)
         caller.filter(
             output_vcf=self.filtered_biallelic_vcf,
             bed_path=self.regions.path,
             to_biallelic=True,
         )
-
         annotator = VariantAnnotator(
             vcf_path=self.filtered_biallelic_vcf,
             bed_path=self.regions.path,
