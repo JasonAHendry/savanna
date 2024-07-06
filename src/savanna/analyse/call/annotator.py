@@ -1,11 +1,14 @@
 import os
 import re
-import warnings
+import logging
 import subprocess
 import pandas as pd
 from dataclasses import dataclass
 from savanna.util.dirs import produce_dir
 from savanna.download.references import Reference
+
+
+log = logging.getLogger()
 
 
 # ================================================================
@@ -45,7 +48,7 @@ class Consequence:
         )
 
         if match is None:
-            warnings.warn(f"Unable to parse AA change for: {self.aa_change}.")
+            log.warn(f"Unable to parse AA change for: {self.aa_change}.")
             return
 
         aa_pos, from_aa, to_aa = match.groups()
@@ -75,7 +78,7 @@ class Consequence:
 
         consequences = csq_string.split(",")
         if len(consequences) > 1:
-            warnings.warn(
+            log.warn(
                 f"Found multiple consequences of variant: {csq_string}! Keeping only first."
             )
 

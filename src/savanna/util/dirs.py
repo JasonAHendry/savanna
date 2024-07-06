@@ -63,8 +63,6 @@ class ExperimentDirectories:
         """
         Create directory heirarchy for an experiment
 
-        TODO: Add a /logs?
-
         """
 
         self.expt_name = expt_name
@@ -84,6 +82,9 @@ class ExperimentDirectories:
         # Setup metadata
         self.metadata_dir = produce_dir(self.expt_dir, "metadata")
         self._populate_metadata_dir(metadata, regions)
+
+        # For logs
+        self.log_dir = produce_dir(self.expt_dir, "logs")
 
         # This is for experimental summaries
         self.summary_dir = produce_dir(self.approach_dir, "summary")

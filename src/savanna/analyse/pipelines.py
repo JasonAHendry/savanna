@@ -1,3 +1,4 @@
+import logging
 from abc import ABC, abstractmethod
 
 from savanna.util.metadata import MetadataTableParser
@@ -7,7 +8,6 @@ from savanna.download.references import (
     PlasmodiumFalciparum3D7,
     AnophelesGambiaePEST,
 )
-
 from savanna.analyse.fastq.experiment import ExperimentFASTQCount
 from savanna.analyse.map.experiment import (
     ExperimentMapToReference,
@@ -16,6 +16,8 @@ from savanna.analyse.bedcov.experiment import ExperimentBedCoverage
 from savanna.analyse.bamstats.experiment import ExperimentBamStats
 from savanna.analyse.call.experiment import ExperimentCallWithBcftools
 
+
+log = logging.getLogger()
 
 class Pipeline(ABC):
     def __init__(
@@ -56,23 +58,23 @@ class PlasmoPipeline(Pipeline):
     reference = PlasmodiumFalciparum3D7()
 
     def run(self):
-        print(f"Running {self.__class__.__name__}")
+        log.info(f"Running {self.__class__.__name__}")
 
         self.reference.confirm_downloaded()
 
-        print("FASTQ...")
+        log.info("FASTQ...")
         analyse_fastq = ExperimentFASTQCount(
             self.expt_dirs, self.metadata, **self.kwargs
         )
         analyse_fastq.run()
 
-        print("Map...")
+        log.info("Map...")
         mapper = ExperimentMapToReference(
             self.expt_dirs, self.metadata, self.reference, **self.kwargs
         )
         mapper.run()
 
-        print("BAM statistics...")
+        log.info("BAM statistics...")
         bamstats = ExperimentBamStats(
             self.expt_dirs,
             self.metadata,
@@ -81,7 +83,7 @@ class PlasmoPipeline(Pipeline):
         )
         bamstats.run()
 
-        print("Coverage...")
+        log.info("Coverage...")
         bedcov = ExperimentBedCoverage(
             self.expt_dirs,
             self.metadata,
@@ -91,7 +93,7 @@ class PlasmoPipeline(Pipeline):
         )
         bedcov.run()
 
-        print("Variant calling...")
+        log.info("Variant calling...")
         call = ExperimentCallWithBcftools(
             self.expt_dirs,
             self.metadata,
@@ -100,8 +102,7 @@ class PlasmoPipeline(Pipeline):
             **self.kwargs,
         )
         call.run()
-
-        print("Done.")
+        log.info("Done.")
         
 
 

@@ -1,6 +1,9 @@
+import logging
 import subprocess
-import warnings
 from typing import List
+
+
+log = logging.getLogger()
 
 
 class VariantMerger:
@@ -21,7 +24,7 @@ class VariantMerger:
 
         cmd_merge = f"bcftools merge {self.vcf_string}"
 
-        warnings.warn("Output is currently limited to biallelic SNPs!")
+        log.warn("Output is currently limited to biallelic SNPs!")
         cmd_view = "bcftools view"
         cmd_view += " --min-alleles 2"
         cmd_view += " --max-alleles 2"

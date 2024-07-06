@@ -10,13 +10,17 @@ def main(expt_name: str, fastq_dir: str, metadata_csv: str, region_bed: str, pip
     """
     Entry point for core analysis pipeline
 
+    TODO: could record runtime
+
     """
 
     # SETUP LOGGING
-    config_root_logger(f"results/{expt_name}/metadata/savanna.log", verbose=False)
+    config_root_logger(log_dir=f"results/{expt_name}/logs", verbose=False)
     log = logging.getLogger("savanna")
 
     # PARSE INPUT
+    log.info("="*80)
+    log.info("-"*80)
     log.info("Input parameters:")
     log.info(f"  Experiment Name: {expt_name}")
     log.info(f"  FASTQ (.fastq): {fastq_dir}")
@@ -47,4 +51,7 @@ def main(expt_name: str, fastq_dir: str, metadata_csv: str, region_bed: str, pip
         summary_only=summary_only
     )
     pipeline_runner.run()
+
+    log.info("-"*80)
+    log.info("="*80)
 
