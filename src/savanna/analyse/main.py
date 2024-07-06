@@ -4,14 +4,11 @@ from savanna.util.logging_config import config_root_logger
 from savanna.util.metadata import MetadataTableParser
 from savanna.util.dirs import ExperimentDirectories
 from savanna.util.regions import RegionBEDParser
-from savanna.analyse.pipelines import PIPELINE_COLLECTION
+from savanna.analyse._pipelines import PIPELINE_COLLECTION
 
 def main(expt_name: str, fastq_dir: str, metadata_csv: str, region_bed: str, pipeline: str, barcode: int, summary_only: bool):
     """
     Entry point for core analysis pipeline
-
-    TODO: could record runtime
-
     """
 
     # SETUP LOGGING

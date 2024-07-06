@@ -4,22 +4,27 @@ from abc import ABC, abstractmethod
 from savanna.util.metadata import MetadataTableParser
 from savanna.util.dirs import ExperimentDirectories
 from savanna.util.regions import RegionBEDParser
-from savanna.download.references import (
-    PlasmodiumFalciparum3D7,
-    AnophelesGambiaePEST,
-)
+from savanna.download.references import Reference
 from savanna.analyse.fastq.experiment import ExperimentFASTQCount
-from savanna.analyse.map.experiment import (
-    ExperimentMapToReference,
-)
+from savanna.analyse.map.experiment import ExperimentMapToReference
 from savanna.analyse.bedcov.experiment import ExperimentBedCoverage
 from savanna.analyse.bamstats.experiment import ExperimentBamStats
 from savanna.analyse.call.experiment import ExperimentCallWithBcftools
 
-
 log = logging.getLogger()
 
+
 class Pipeline(ABC):
+    """
+    Intereface for a pipline
+
+    Notes:
+    * Must define self.run()
+    * Some common attributes assigned (self.expt_dirs)
+    * Some common steps are packaged already (self.map_to_reference())
+
+    """
+
     def __init__(
         self,
         expt_dirs: ExperimentDirectories,
@@ -48,94 +53,51 @@ class Pipeline(ABC):
     def run(self) -> None:
         pass
 
-
-class PlasmoPipeline(Pipeline):
-    """
-    Basic pipeline for plasmodium falciparum
-
-    """
-
-    reference = PlasmodiumFalciparum3D7()
-
-    def run(self):
-        log.info(f"Running {self.__class__.__name__}")
-
-        self.reference.confirm_downloaded()
-
-        log.info("FASTQ...")
+    def _count_fastqs(self) -> None:
+        log.info("Counting FASTQ files")
         analyse_fastq = ExperimentFASTQCount(
             self.expt_dirs, self.metadata, **self.kwargs
         )
         analyse_fastq.run()
+        log.info("Done.")
 
-        log.info("Map...")
+    def _map_to_reference(self, reference: Reference) -> None:
+        log.info("Mapping reads")
+        log.info(f" to: {reference.name}")
         mapper = ExperimentMapToReference(
-            self.expt_dirs, self.metadata, self.reference, **self.kwargs
+            self.expt_dirs, self.metadata, reference, **self.kwargs
         )
         mapper.run()
+        log.info("Done.")
 
-        log.info("BAM statistics...")
+    def _calc_bamstat(self, reference: Reference) -> None:
+        log.info("Calculating mapping statistics")
+        log.info(f" to: {reference.name}")
         bamstats = ExperimentBamStats(
-            self.expt_dirs,
-            self.metadata,
-            self.reference,
-            **self.kwargs
+            self.expt_dirs, self.metadata, reference, **self.kwargs
         )
         bamstats.run()
+        log.info("Done.")
 
-        log.info("Coverage...")
+    def _calc_bedcov(self, reference: Reference) -> None:
+        log.info("Calculating coverage over amplicons")
+        log.info(f"  Reference: {reference.name}")
+        log.info(f"  Amplicons (BED): {self.regions.path}")
         bedcov = ExperimentBedCoverage(
-            self.expt_dirs,
-            self.metadata,
-            self.regions,
-            self.reference,
-            **self.kwargs,
+            self.expt_dirs, self.metadata, self.regions, reference, **self.kwargs
         )
         bedcov.run()
 
-        log.info("Variant calling...")
+    def _call_with_bcftools(self, reference: Reference) -> None:
+        log.info("Calling variants with bcftools")
+        log.info(f"  Reference: {reference.name}")
+        log.info(f"  Amplicons (BED): {self.regions.path}")
         call = ExperimentCallWithBcftools(
             self.expt_dirs,
             self.metadata,
             self.regions,
-            self.reference,
+            reference,
             **self.kwargs,
         )
         call.run()
         log.info("Done.")
-        
-
-
-
-class EntoPipeline(Pipeline):
-    """
-    Basic pipeline for vectors falciparum
-
-    """
-
-    reference = AnophelesGambiaePEST()
-
-    def run(self):
-        print(f"Running {self.__class__.__name__}")
-
-        self.reference.confirm_downloaded()
-
-        print("FASTQ...")
-        analyse_fastq = ExperimentFASTQCount(self.expt_dirs, self.metadata, **self.kwargs)
-        analyse_fastq.run()
-
-        print("Map...")
-        mapper = ExperimentMapToReference(self.expt_dirs, self.metadata, self.reference, **self.kwargs)
-        mapper.run()
-
-        print("Coverage...")
-        bedcov = ExperimentBedCoverage(
-            self.expt_dirs, self.metadata, self.regions, self.reference, **self.kwargs
-        )
-        bedcov.run()
-
-
-PIPELINE_COLLECTION = {
-    "plasmo": PlasmoPipeline,
-    "ento": EntoPipeline,
-}
