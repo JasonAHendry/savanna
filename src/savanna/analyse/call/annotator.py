@@ -215,7 +215,7 @@ class VariantAnnotator:
                 *[(c.csq, c.concise_aa_change, c.aa_pos, c.strand) for c in csqs]
             )
         else:
-            print(f"No mutations passed quality control for {self.barcode_name}.")
+            log.warn(f"No mutations passed quality control for {self.vcf_path}.")
             mut_type, aa_change, aa_pos, strand = None, None, None, None
 
         df.insert(6, "mut_type", mut_type)
