@@ -1,10 +1,7 @@
-import pandas as pd
-from typing import List
 from savanna.analyse._interfaces import BarcodeAnalysis
 from savanna.util.dirs import ExperimentDirectories
 from savanna.util.regions import RegionBEDParser
 from savanna.download.references import Reference, PlasmodiumFalciparum3D7
-from savanna.wrappers import samtools
 from .callers import BcfTools
 from .annotator import VariantAnnotator
 

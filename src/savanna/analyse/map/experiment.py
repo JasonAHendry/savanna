@@ -44,12 +44,6 @@ class ExperimentMapToPfalciparum(ExperimentAnalysis):
 
 
 class ExperimentMapUnmappedToHSapiens(ExperimentAnalysis):
-    """
-    In this case, we really are just wrapping the mapping steps
-    We don't produce any summary files or plots of the BAM files themselves
-
-    """
-
     def _get_barcode_analysis(self, barcode_name: str) -> BarcodeAnalysis:
         return BarcodeMapUnmappedToHSapiens(barcode_name, self.expt_dirs)
 
