@@ -1,4 +1,5 @@
 import logging
+import yaml
 from abc import ABC, abstractmethod
 
 from savanna.util.metadata import MetadataTableParser
@@ -11,6 +12,7 @@ from savanna.analyse.bedcov.experiment import ExperimentBedCoverage
 from savanna.analyse.bamstats.experiment import ExperimentBamStats
 from savanna.analyse.bamfilt.experiment import ExperimentFilterBAM
 from savanna.analyse.call.experiment import ExperimentCallWithBcftools
+
 
 log = logging.getLogger()
 
@@ -39,6 +41,7 @@ class Pipeline(ABC):
         self.expt_dirs = expt_dirs
         self.metadata = metadata
         self.regions = regions
+        self.params = None
 
         # Behaviour
         self.barcode = barcode
@@ -53,6 +56,10 @@ class Pipeline(ABC):
     @abstractmethod
     def run(self) -> None:
         pass
+
+    def _load_parameters(self, parameter_path: str):
+        with open(parameter_path, "r") as file:
+            self.params = yaml.safe_load(file)
 
     def _count_fastqs(self) -> None:
         log.info("Counting FASTQ files")
@@ -76,7 +83,7 @@ class Pipeline(ABC):
         log.info(f"  Reference: {reference.name}")
         filter = ExperimentFilterBAM(
             self.expt_dirs, self.metadata, self.reference, **self.kwargs
-        )
+        ) # so they would get passed here
         filter.run()
         log.info("Done.")
 

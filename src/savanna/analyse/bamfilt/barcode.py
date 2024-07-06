@@ -6,6 +6,7 @@ from savanna.wrappers import samtools
 
 
 MIN_MAPQ = 40
+EXCLUDE_FLAGS = "0x904"  # Only retain primary alignments
 
 
 class FilterBAM(BarcodeAnalysis):
@@ -17,8 +18,12 @@ class FilterBAM(BarcodeAnalysis):
         expt_dirs: ExperimentDirectories,
         reference: Reference = PlasmodiumFalciparum3D7(),
         make_plot: bool = True,
+        min_mapq: int = MIN_MAPQ,
+        exclude_flags: str = EXCLUDE_FLAGS
     ):
         self.reference = reference
+        self.min_mapq = min_mapq
+        self.exclude_flags = exclude_flags
         super().__init__(barcode_name, expt_dirs, make_plot)
 
     def _define_inputs(self) -> List[str]:
@@ -39,7 +44,8 @@ class FilterBAM(BarcodeAnalysis):
         0x800   : chimeric / supplementary alignment
         """
 
-        args = f" -q {MIN_MAPQ} -F 0x904"
+        args = f" -q {self.min_mapq} -F {self.exclude_flags}"
+        print(args)
         samtools.view(input_bam=self.input_bam, args=args, output_bam=self.output_bam)
         samtools.index(self.output_bam)
 

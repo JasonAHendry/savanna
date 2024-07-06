@@ -1,0 +1,3 @@
+bam_filter:
+  min_mapq: 90
+  exclude_flags: "0x904"
