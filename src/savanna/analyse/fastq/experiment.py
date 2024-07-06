@@ -6,8 +6,8 @@ from savanna.analyse._interfaces import BarcodeAnalysis, ExperimentAnalysis
 from .barcode import BarcodeFASTQCounter
 
 
-# Update to work with new interface
 class ExperimentFASTQCount(ExperimentAnalysis):
+    name = "fastq"
     def _get_barcode_analysis(self, barcode_name: str) -> BarcodeAnalysis:
         return BarcodeFASTQCounter(barcode_name, self.expt_dirs)
 
@@ -32,7 +32,7 @@ class ExperimentFASTQCount(ExperimentAnalysis):
 
         # Concat and write
         self.fastq_df = pd.DataFrame(fastq_dts)
-        df_path = f"{self.expt_dirs.approach_dir}/summary.fastq.csv"
+        df_path = f"{self.summary_dir}/summary.fastq.csv"
         self.fastq_df.to_csv(df_path, index=False)
 
     def _plot(self):
@@ -42,7 +42,7 @@ class ExperimentFASTQCount(ExperimentAnalysis):
         self.fastq_df.index = self.fastq_df.barcode
         self.fastq_df["n_fastq"].plot(kind="bar", ax=ax)
         fig.savefig(
-            f"{self.expt_dirs.approach_dir}/plot.fastq.pdf",
+            f"{self.summary_dir}/plot.fastq.pdf",
             dpi=300,
             pad_inchs=0.5,
             bbox_inches="tight",

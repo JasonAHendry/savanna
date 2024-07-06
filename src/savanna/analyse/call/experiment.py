@@ -27,6 +27,7 @@ from .annotator import VariantAnnotator
 
 
 class ExperimentCallWithBcftools(ExperimentAnalysis):
+    name = "call"
     def __init__(
         self,
         expt_dirs: ExperimentDirectories,
@@ -56,7 +57,7 @@ class ExperimentCallWithBcftools(ExperimentAnalysis):
             vcfs.append(filtered_vcf)
 
         # Merge VCFs
-        output_vcf = f"{self.expt_dirs.expt_dir}/bcftools.filtered.biallelic.vcf.gz"
+        output_vcf = f"{self.summary_dir}/bcftools.filtered.biallelic.vcf.gz"
         merger = VariantMerger(vcfs)
         merger.run(output_vcf)
 
@@ -65,7 +66,7 @@ class ExperimentCallWithBcftools(ExperimentAnalysis):
             output_vcf,  # Note that we annotated only filtered VCF
             self.regions.path,
             self.reference,
-            output_dir=self.expt_dirs.expt_dir,
+            output_dir=self.summary_dir,
         )
         annotator.run()
         annotator.convert_to_tsv()

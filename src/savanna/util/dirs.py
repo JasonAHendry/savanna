@@ -63,6 +63,8 @@ class ExperimentDirectories:
         """
         Create directory heirarchy for an experiment
 
+        TODO: Add a /logs?
+
         """
 
         self.expt_name = expt_name
@@ -73,15 +75,18 @@ class ExperimentDirectories:
         self.approach_dir = produce_dir(self.expt_dir, approach_name)
 
         # Output for basecalling & demultiplexing
-        self.basecall_dir = produce_dir(self.approach_dir, "basecall")
+        self.basecall_dir = produce_dir(self.approach_dir, "basecalling")
         if fastq_dir is not None:
             self.demux_dir = fastq_dir
         else:
-            self.demux_dir = produce_dir(self.approach_dir, "demux")
+            self.demux_dir = produce_dir(self.approach_dir, "demultiplexing")
 
         # Setup metadata
         self.metadata_dir = produce_dir(self.expt_dir, "metadata")
         self._populate_metadata_dir(metadata, regions)
+
+        # This is for experimental summaries
+        self.summary_dir = produce_dir(self.approach_dir, "summary")
 
         # Output for individual barcode analyses
         self.barcodes_dir = produce_dir(self.approach_dir, "barcodes")

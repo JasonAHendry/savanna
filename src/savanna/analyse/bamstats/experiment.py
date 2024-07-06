@@ -11,6 +11,7 @@ from .barcode import BamStats
 
 
 class ExperimentBamStats(ExperimentAnalysis):
+    name = "bamstats"
     def __init__(
         self,
         expt_dirs: ExperimentDirectories,
@@ -48,7 +49,7 @@ class ExperimentBamStats(ExperimentAnalysis):
         # Concat and write
         self.bamstats_df = pd.DataFrame(bamstat_dts)
         df_path = (
-            f"{self.expt_dirs.approach_dir}/summary.bamstats.{self.reference.name}.csv"
+            f"{self.summary_dir}/summary.bamstats.{self.reference.name}.csv"
         )
         self.bamstats_df.to_csv(df_path, index=False)
 
@@ -66,7 +67,7 @@ class ExperimentBamStats(ExperimentAnalysis):
         ax.legend(bbox_to_anchor=(1, 1))
 
         fig.savefig(
-            f"{self.expt_dirs.approach_dir}/plot.bamstats.{self.reference.name}.pdf",
+            f"{self.summary_dir}/plot.bamstats.{self.reference.name}.pdf",
             dpi=300,
             pad_inchs=0.5,
             bbox_inches="tight",

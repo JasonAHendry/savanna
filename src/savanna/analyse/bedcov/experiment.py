@@ -12,6 +12,9 @@ from .barcode import BarcodeBEDCoverage
 
 
 class ExperimentBedCoverage(ExperimentAnalysis):
+
+    name = "bedcov"
+    
     def __init__(
         self,
         expt_dirs: ExperimentDirectories,
@@ -40,7 +43,7 @@ class ExperimentBedCoverage(ExperimentAnalysis):
             bedcov_dfs.append(pd.read_csv(output_csv))
         self.bedcov_df = pd.concat(bedcov_dfs)
 
-        df_path = f"{self.expt_dirs.approach_dir}/summary.bedcov.csv"
+        df_path = f"{self.summary_dir}/summary.bedcov.csv"
         self.bedcov_df.to_csv(df_path, index=False)
 
     def _plot(self):
@@ -52,7 +55,7 @@ class ExperimentBedCoverage(ExperimentAnalysis):
         ax.legend(bbox_to_anchor=(1, 1))
 
         fig.savefig(
-            f"{self.expt_dirs.approach_dir}/plot.bedcov.pdf",
+            f"{self.summary_dir}/plot.bedcov.pdf",
             bbox_inches="tight",
             pad_inches=0.5,
         )
