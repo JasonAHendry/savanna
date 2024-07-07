@@ -19,5 +19,7 @@ dependencies:
   - click
   - black
   - flake8
-  - pip
   - pytest
+  - pip
+  - pip:
+    - pyyaml

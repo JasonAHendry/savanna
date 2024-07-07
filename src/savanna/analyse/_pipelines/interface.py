@@ -11,7 +11,6 @@ from savanna.analyse.map.experiment import ExperimentMapToReference
 from savanna.analyse.bedcov.experiment import ExperimentBedCoverage
 from savanna.analyse.bamstats.experiment import ExperimentBamStats
 from savanna.analyse.bamfilt.experiment import ExperimentFilterBAM
-from savanna.analyse.call.experiment import ExperimentCallWithBcftools
 
 
 log = logging.getLogger()
@@ -105,16 +104,4 @@ class Pipeline(ABC):
         )
         bedcov.run()
 
-    def _call_with_bcftools(self, reference: Reference) -> None:
-        log.info("Calling variants with bcftools")
-        log.info(f"  Reference: {reference.name}")
-        log.info(f"  Amplicons (BED): {self.regions.path}")
-        call = ExperimentCallWithBcftools(
-            self.expt_dirs,
-            self.metadata,
-            self.regions,
-            reference,
-            **self.kwargs,
-        )
-        call.run()
-        log.info("Done.")
+

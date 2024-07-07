@@ -9,7 +9,25 @@ from savanna.wrappers import bcftools
 # ================================================================
 
 
+MIN_DEPTH = 50
+MIN_QUAL = 20
+TO_BIALLELIC_SNPS = True
+
+
 class VariantCaller(ABC):
+    """
+    Interface for different variant calling methods
+
+    Define the _run() method, which writes a vcf to
+    self.vcf_path, to implement a new variant caller.
+
+    The class includes useful auxiliary steps such as
+    adding a sample name to the VCF and indexing it. It
+    also has a filtering method useful for reducing
+    a VCF to amplicon regions, with optional variant
+    type filtering.
+    """
+
     def __init__(self, fasta_path: str) -> None:
         self.fasta_path = fasta_path
         self.vcf_path = None
@@ -22,7 +40,6 @@ class VariantCaller(ABC):
         """
         Run core variant calling method
         """
-
         # Store
         self.vcf_path = vcf_path
 
@@ -36,24 +53,20 @@ class VariantCaller(ABC):
         # Index
         bcftools.index(self.vcf_path)
 
-    def filter(
+    def filter_to_amplicons(
         self,
         output_vcf: str,
         bed_path: str,
-        min_depth: int = 50,
-        # min_qual: int = 20,
-        to_biallelic: bool = False,
+        min_depth: int = MIN_DEPTH,
+        min_qual: int = MIN_QUAL,
+        to_biallelic: bool = TO_BIALLELIC_SNPS,
     ) -> None:
         """
         Filters the output VCF to only regions contained within
         `bed_path`; also optionally excludes sites below a threshold
         """
-
         if self.vcf_path is None:
             raise ValueError("Must run variant calling before filtering.")
-
-        self.MIN_DEPTH = min_depth
-        # self.MIN_QUAL = min_qual
 
         cmd_view = "bcftools view"
         cmd_view += f" -R {bed_path}"
@@ -65,7 +78,7 @@ class VariantCaller(ABC):
 
         cmd_filter = "bcftools filter"
         cmd_filter += " -S ."
-        cmd_filter += f" -e 'FORMAT/DP<{self.MIN_DEPTH}'"  # ||QUAL<{self.MIN_QUAL}'"
+        cmd_filter += f" -e 'FORMAT/DP<{min_depth} || QUAL<{min_qual}'"
         cmd_filter += f" -Oz -o {output_vcf} -"
 
         cmd = f"{cmd_view} | {cmd_filter}"
@@ -79,13 +92,38 @@ class VariantCaller(ABC):
 # ================================================================
 # Concrete implementations
 #
+# Guidelines:
+# - Parameters we might commonly change are exposed in __init__
+# - "Fixed" parameters are made class attributes for visibility
+#
 # ================================================================
 
 
+# Why out here?
+MAX_DEPTH = 10_000
+MUTATION_RATE_PRIOR = 0.01
+
+
 class BcfTools(VariantCaller):
+    """
+    Call variants using bcftools mpileup | bcftools call
+
+    See:
+        https://samtools.github.io/bcftools/howtos/variant-calling.html
+    """
+
     ANNOTATE_MPILEUP = "FORMAT/DP,FORMAT/AD"
     ANNOTATE_CALL = "FORMAT/GQ"
-    MAX_DEPTH = 10_000
+
+    def __init__(self, 
+                 fasta_path: str, 
+                 max_depth: int = MAX_DEPTH,
+                 mutation_rate_prior: float = MUTATION_RATE_PRIOR
+    ) -> None:
+        self.fasta_path = fasta_path
+        self.max_depth = max_depth
+        self.mutation_rate_prior = mutation_rate_prior
+        self.vcf_path = None
 
     def _run(self, bam_path: str, vcf_path: str) -> None:
         """
@@ -105,19 +143,24 @@ class BcfTools(VariantCaller):
 
         `-P` : Prior on mutation rate
 
+        From `bcftools mpileup`
+        ont:         -B -Q5 --max-BQ 30 -I [also try eg |bcftools call -P0.01
         """
-
+        # Prepare mpileup command
         cmd_pileup = "bcftools mpileup -Ou"
         cmd_pileup += f" -X ont"
         cmd_pileup += f" --annotate {self.ANNOTATE_MPILEUP}"
-        cmd_pileup += f" --max-depth {self.MAX_DEPTH}"
+        cmd_pileup += f" --max-depth {self.max_depth}"
         cmd_pileup += f" -f {self.fasta_path}"
         cmd_pileup += f" {bam_path}"
 
-        # NB: We are returning *all* variants (not using -v)
-        cmd_call = (
-            f"bcftools call -m -P 0.01 -a '{self.ANNOTATE_CALL}' -Oz -o {vcf_path} -"
-        )
+        # Prepare call command
+        #  - returning *all* variants (not using -v)
+        #  - using multiallelic model (-m)
+        cmd_call = "bcftools call -m"
+        cmd_call += f" -P {self.mutation_rate_prior}"
+        cmd_call += f" -a '{self.ANNOTATE_CALL}'"
+        cmd_call += f" -Oz -o {vcf_path} -"
 
         cmd = f"{cmd_pileup} | {cmd_call}"
 
@@ -131,4 +174,4 @@ class BcfTools(VariantCaller):
 
 
 # Note, they are already initialised
-caller_collection = {"bcftools": BcfTools}
+CALLER_COLLECTION = {"bcftools": BcfTools}

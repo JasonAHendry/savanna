@@ -45,7 +45,6 @@ class FilterBAM(BarcodeAnalysis):
         """
 
         args = f" -q {self.min_mapq} -F {self.exclude_flags}"
-        print(args)
         samtools.view(input_bam=self.input_bam, args=args, output_bam=self.output_bam)
         samtools.index(self.output_bam)
 
