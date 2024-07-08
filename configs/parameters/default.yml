@@ -7,6 +7,7 @@ call:
     max_depth: 10000
     mutation_rate_prior: 0.01
 call_filter:
-  biallelic_snps: True
-  min_depth: 50
-  min_qual: 10
+  to_snps: False
+  to_biallelic: False
+  min_depth: 100
+  min_qual: 15
