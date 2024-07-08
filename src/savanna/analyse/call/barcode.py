@@ -29,7 +29,7 @@ class BarcodeVariantCaller(BarcodeAnalysis):
         # BAM file
         bam_dir = f"{self.barcode_dir}/bams"
         bam_name = f"{self.barcode_name}.{self.reference.name}.filtered.bam"
-        self.bam_path = f"{bam_dir}/{bam_name}")
+        self.bam_path = f"{bam_dir}/{bam_name}"
 
         # FASTA file
         self.fasta_path = self.reference.fasta_path
