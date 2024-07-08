@@ -6,6 +6,7 @@ from savanna.analyse.bamfilt.experiment import ExperimentFilterBAM
 from savanna.analyse.map.experiment import ExperimentMapUnmappedToHSapiens
 from savanna.analyse.call.callers import CALLER_COLLECTION
 from savanna.analyse.call.experiment import ExperimentVariantCaller
+from savanna.analyse.callfilt.experiment import ExperimentVcfFilter
 from .interface import Pipeline
 
 
@@ -20,7 +21,6 @@ class PlasmoPipeline(Pipeline):
 
     def run(self):
         log.info(f"Running {self.__class__.__name__}")
-
 
         # For convenience below
         core_args = {
@@ -75,7 +75,18 @@ class PlasmoPipeline(Pipeline):
                 **self.kwargs
             )
             expt_caller.run()
+
+            log.info(f"Filtering variants: {self.params['call_filter']}")
+            expt_filter = ExperimentVcfFilter(
+                self.expt_dirs,
+                self.metadata,
+                self.regions,
+                self.reference,
+                caller_name=caller_name,
+                **self.params['call_filter'],
+                **self.kwargs
+            )
+            expt_filter.run()
             log.info("Done with tool.")
         log.info("Done with all variant calling.")
-
             

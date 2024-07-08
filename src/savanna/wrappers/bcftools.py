@@ -2,6 +2,7 @@ import os
 import uuid
 import shutil
 import subprocess
+from typing import List
 
 
 def view(input_vcf, output_vcf, dry_run=False, **kwargs):
@@ -82,6 +83,18 @@ def index(input_vcf):
     """
 
     cmd = f"bcftools index -f {input_vcf}"
+    subprocess.run(cmd, shell=True, check=True)
+
+
+def merge(vcfs: List[str], output_vcf: str):
+    """
+    Run `bcftools merge` on a list of VCF files
+
+    TODO: Could add arguments to this, but not strictly necessary
+    """
+    vcf_string = " ".join(vcfs)
+
+    cmd = f"bcftools merge -F x {vcf_string} -Oz -o {output_vcf}"
     subprocess.run(cmd, shell=True, check=True)
 
 

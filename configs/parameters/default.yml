@@ -9,5 +9,5 @@ call:
 call_filter:
   to_snps: False
   to_biallelic: False
-  min_depth: 100
+  min_depth: 40
   min_qual: 15

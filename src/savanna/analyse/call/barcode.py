@@ -1,10 +1,8 @@
-from typing import Dict, List
+from typing import List
 from savanna.analyse._interfaces import BarcodeAnalysis
 from savanna.util.dirs import ExperimentDirectories
-from savanna.util.regions import RegionBEDParser
 from savanna.download.references import Reference, PlasmodiumFalciparum3D7
 from .callers import VariantCaller
-from .annotator import VariantAnnotator
 
 
 class BarcodeVariantCaller(BarcodeAnalysis):
