@@ -2,7 +2,7 @@ import logging
 
 from savanna.util.dirs import ROOT_DIR
 from savanna.download.references import AnophelesGambiaePEST
-from savanna.analyse.call.experiment import ExperimentCallWithMethod
+from savanna.analyse.call.experiment import ExperimentVariantCaller
 from .interface import Pipeline
 
 

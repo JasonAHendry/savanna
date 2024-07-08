@@ -9,84 +9,43 @@ from savanna.wrappers import bcftools
 # ================================================================
 
 
-MIN_DEPTH = 50
-MIN_QUAL = 20
-TO_BIALLELIC_SNPS = True
-
-
 class VariantCaller(ABC):
     """
     Interface for different variant calling methods
 
-    Define the _run() method, which writes a vcf to
-    self.vcf_path, to implement a new variant caller.
-
-    The class includes useful auxiliary steps such as
-    adding a sample name to the VCF and indexing it. It
-    also has a filtering method useful for reducing
-    a VCF to amplicon regions, with optional variant
-    type filtering.
     """
 
     def __init__(self, fasta_path: str) -> None:
         self.fasta_path = fasta_path
-        self.vcf_path = None
+
+    @property
+    @abstractmethod
+    def name(self) -> str:
+        """
+        Give a short name to the variant caller
+        """
+        pass
 
     @abstractmethod
     def _run(self, bam_path: str, vcf_path: str) -> None:
+        """
+        Produce a VCF from a BAM file
+        """
         pass
 
     def run(self, bam_path: str, vcf_path: str, sample_name: str = None):
         """
         Run core variant calling method
         """
-        # Store
-        self.vcf_path = vcf_path
-
         # Core method
         self._run(bam_path, vcf_path)
 
         # Optionally name
         if sample_name is not None:
-            bcftools.reheader(self.vcf_path, self.vcf_path, [sample_name])
+            bcftools.reheader(vcf_path, vcf_path, [sample_name])
 
         # Index
-        bcftools.index(self.vcf_path)
-
-    def filter_to_amplicons(
-        self,
-        output_vcf: str,
-        bed_path: str,
-        min_depth: int = MIN_DEPTH,
-        min_qual: int = MIN_QUAL,
-        to_biallelic: bool = TO_BIALLELIC_SNPS,
-    ) -> None:
-        """
-        Filters the output VCF to only regions contained within
-        `bed_path`; also optionally excludes sites below a threshold
-        """
-        if self.vcf_path is None:
-            raise ValueError("Must run variant calling before filtering.")
-
-        cmd_view = "bcftools view"
-        cmd_view += f" -R {bed_path}"
-        if to_biallelic:
-            cmd_view += " --types='snps'"
-            cmd_view += " --min-alleles 2"
-            cmd_view += " --max-alleles 2"
-        cmd_view += f" {self.vcf_path}"
-
-        cmd_filter = "bcftools filter"
-        cmd_filter += " -S ."
-        cmd_filter += f" -e 'FORMAT/DP<{min_depth} || QUAL<{min_qual}'"
-        cmd_filter += f" -Oz -o {output_vcf} -"
-
-        cmd = f"{cmd_view} | {cmd_filter}"
-
-        subprocess.run(cmd, check=True, shell=True)
-
-        # Index
-        bcftools.index(output_vcf)
+        bcftools.index(vcf_path)
 
 
 # ================================================================
@@ -97,11 +56,6 @@ class VariantCaller(ABC):
 # - "Fixed" parameters are made class attributes for visibility
 #
 # ================================================================
-
-
-# Why out here?
-MAX_DEPTH = 10_000
-MUTATION_RATE_PRIOR = 0.01
 
 
 class BcfTools(VariantCaller):
@@ -115,15 +69,21 @@ class BcfTools(VariantCaller):
     ANNOTATE_MPILEUP = "FORMAT/DP,FORMAT/AD"
     ANNOTATE_CALL = "FORMAT/GQ"
 
-    def __init__(self, 
-                 fasta_path: str, 
-                 max_depth: int = MAX_DEPTH,
-                 mutation_rate_prior: float = MUTATION_RATE_PRIOR
+    def __init__(
+        self,
+        fasta_path: str,
+        mpileup_setting: str = "ont",
+        max_depth: int = 10_000,
+        mutation_rate_prior: float = 0.01,
     ) -> None:
         self.fasta_path = fasta_path
+        self.mpileup_setting = mpileup_setting
         self.max_depth = max_depth
         self.mutation_rate_prior = mutation_rate_prior
-        self.vcf_path = None
+
+    @property
+    def name(self):
+        return "bcftools"
 
     def _run(self, bam_path: str, vcf_path: str) -> None:
         """
@@ -148,7 +108,7 @@ class BcfTools(VariantCaller):
         """
         # Prepare mpileup command
         cmd_pileup = "bcftools mpileup -Ou"
-        cmd_pileup += f" -X ont"
+        cmd_pileup += f" -X {self.mpileup_setting}"
         cmd_pileup += f" --annotate {self.ANNOTATE_MPILEUP}"
         cmd_pileup += f" --max-depth {self.max_depth}"
         cmd_pileup += f" -f {self.fasta_path}"
@@ -173,5 +133,4 @@ class BcfTools(VariantCaller):
 # ================================================================
 
 
-# Note, they are already initialised
 CALLER_COLLECTION = {"bcftools": BcfTools}
