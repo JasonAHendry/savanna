@@ -1,0 +1,5 @@
+﻿barcode,sample_id,sample_type,source,strain,parasitemia,post_spri_ngul
+barcode01,BEI-3D7,lab,bei_resources,3D7,10000,85.2
+barcode02,BEI-Dd2,lab,bei_resources,Dd2,10000,108
+barcode03,BEI-HB3-B2,lab,bei_resources,HB3-B2,10000,81.6
+barcode04,BEI-IPC5202,lab,bei_resources,IPC5202,10000,74.8

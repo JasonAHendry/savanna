@@ -1,0 +1,10 @@
+barcode,sample_id,strain,parasitemia,condition,mastermix_vol,primer_vol,ext_temp,replicate,date
+barcode57,3d7_10k_B_15_60,3D7,10000,COND4,15.5,1.5,60,B,19.06.2024
+barcode58,3d7_1k_B_15_60,3D7,1000,COND4,15.5,1.5,60,B,19.06.2024
+barcode59,3d7_100_B_15_60,3D7,100,COND4,15.5,1.5,60,B,19.06.2024
+barcode60,Dd2_1k_B_15_60,Dd2,1000,COND4,15.5,1.5,60,B,19.06.2024
+barcode61,Dd2_100_B_15_60,Dd2,100,COND4,15.5,1.5,60,B,19.06.2024
+barcode62,HB3_1k_B_15_60,HB3,1000,COND4,15.5,1.5,60,B,19.06.2024
+barcode63,HB3_100_B_15_60,HB3,100,COND4,15.5,1.5,60,B,19.06.2024
+barcode64,NTC_B_15_60,NTC,0,COND4,15.5,1.5,60,B,19.06.2024
+barcode65,H2O,NTC-WATER,0,,,,,,19.06.2024

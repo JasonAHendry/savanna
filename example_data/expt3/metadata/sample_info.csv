@@ -1,0 +1,7 @@
+barcode,sample_id,species,dna_extraction,crushed,resistant,location,platform,kit
+barcode01,AG10F,gambiae,qiagen,True,unknown,Berlin,flongle,rapid
+barcode02,AG2L,gambiae,qiagen,True,susceptible,Berlin,flongle,rapid
+barcode03,AA3RL,arabiensis,qiagen,True,resistance,Berlin,flongle,rapid
+barcode04,AA3LS,arabiensis,qiagen,True,susceptible,Berlin,flongle,rapid
+barcode05,AG6F,gambiae,alex,True,unknown,Berlin,flongle,rapid
+barcode06,AA1LS,arabiensis,qiagen,True,susceptible,Berlin,flongle,rapid
