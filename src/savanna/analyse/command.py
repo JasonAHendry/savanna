@@ -1,7 +1,7 @@
 import click
 
-
-PIPELINES = ["plasmo", "ento"]
+# it's duplicated to reduce CLI latency
+PIPELINES = ["plasmo", "ento", "plasmohuman"]
 
 
 @click.command(short_help="Per-sample FASTQ to results.")
