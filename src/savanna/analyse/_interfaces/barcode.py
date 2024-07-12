@@ -100,3 +100,24 @@ class BarcodeAnalysis(ABC):
         if self.make_plot:
             self._plot()
         return self.outputs_exist
+
+
+class NoBarcodeAnalysisNeeded(BarcodeAnalysis):
+    """
+    This class can be used when there is only experiment-level analysisi
+    performed as part of
+    """
+
+    def _define_inputs(self) -> List[str]:
+        """No inputs"""
+        return [self.barcode_dir]
+
+    def _define_outputs(self) -> List[str]:
+        return [self.barcode_dir]
+
+    def _run(self):
+        """Nothing is computed"""
+        return True
+
+    def _plot(self):
+        pass
