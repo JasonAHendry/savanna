@@ -106,21 +106,21 @@ class BcfTools(VariantCaller):
         From `bcftools mpileup`
         ont:         -B -Q5 --max-BQ 30 -I [also try eg |bcftools call -P0.01
         """
-        # Prepare mpileup command
-        cmd_pileup = "bcftools mpileup -Ou"
-        cmd_pileup += f" -X {self.mpileup_setting}"
-        cmd_pileup += f" --annotate {self.ANNOTATE_MPILEUP}"
-        cmd_pileup += f" --max-depth {self.max_depth}"
-        cmd_pileup += f" -f {self.fasta_path}"
-        cmd_pileup += f" {bam_path}"
+        cmd_pileup = (
+            "bcftools mpileup -Ou"
+            f" -X {self.mpileup_setting}"
+            f" --annotate {self.ANNOTATE_MPILEUP}"
+            f" --max-depth {self.max_depth}"
+            f" -f {self.fasta_path}"
+            f" {bam_path}"
+        )
 
-        # Prepare call command
-        #  - returning *all* variants (not using -v)
-        #  - using multiallelic model (-m)
-        cmd_call = "bcftools call -m"
-        cmd_call += f" -P {self.mutation_rate_prior}"
-        cmd_call += f" -a '{self.ANNOTATE_CALL}'"
-        cmd_call += f" -Oz -o {vcf_path} -"
+        cmd_call = (
+            "bcftools call -m"
+            f" -P {self.mutation_rate_prior}"
+            f" -a '{self.ANNOTATE_CALL}'"
+            f" -Oz -o {vcf_path} -"
+        )
 
         cmd = f"{cmd_pileup} | {cmd_call}"
 
