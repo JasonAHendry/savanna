@@ -1,4 +1,6 @@
-# savanna
+<p align="center"><img src="misc/savanna_logo.png" width="500"></p>
+
+## Overview
 *Savanna* is a tool for analysing targeted nanopore sequencing data. It supports a workflow of basecalling, demultiplexing, and downstream analysis $-$ locally or using High-performance computing (HPC). A variety of analysis pipelines are available.
 
 Please note *Savanna* is still in early stage development and your feedback is welcome.
