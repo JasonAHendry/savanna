@@ -1,5 +1,7 @@
 # savanna
-*Savanna* packages several bioinformatic pipelines for amplicon sequencing data generated with nanopore.
+*Savanna* is a tool for analysing targeted nanopore sequencing data. It supports a workflow of basecalling, demultiplexing, and downstream analysis $-$ locally or using High-performance computing (HPC). A variety of analysis pipelines are available.
+
+Please note *Savanna* is still in early stage development and your feedback is welcome.
 
 ## Features
 - [x] Basecalling with [*Dorado*](https://github.com/nanoporetech/dorado)
@@ -109,13 +111,13 @@ Here is a breakdown of key *flags*:
 | ` -f `   | Path to directory containing demultiplexed FASTQ files (e.g. '<path>/<to>/fastq_pass'). Typically produced by MinKNOW, dorado, guppy or with savanna demultiplex. | Required |
 | ` -m `   | Path to metadata CSV file containing barcode and sample information. Required to contain `barcode` and `sample_id` columns; can optionally contain other columns of relevance. See [here](https://github.com/JasonAHendry/savanna/blob/master/example_data/expt1/metadata/sample_info.csv) for an example. | Required |
 | ` -r `   | Path to BED file specifying genomic regions of interest. See [here](https://github.com/JasonAHendry/savanna/blob/master/example_data/expt1/metadata/nomads8.amplicons.bed) for an example.  | Required |
-| ` -p `  | Name of the pipeline to be run. Default is "plasmo". | Optional |
+| ` -p `  | Name of the pipeline to be run. Default is `plasmo` for *P. falciparum*. | Optional |
 | ` -b `  | Analyse only a single barcode from the experiment, indicated by an integer. E.g. to analyse `barcode03` you would include `-b 3` | Optional |
 | ` -s `  | Only run experiment-wide summary. Mainly useful for running *Savanna* in HPC environments. | Optional |
 
 
 ## Testing
-Example data is present in [example_data](https://github.com/JasonAHendry/savanna/tree/master/example_data) and example scripts are present in scripts[https://github.com/JasonAHendry/savanna/tree/master/scripts](https://github.com/JasonAHendry/savanna/tree/master/scripts).
+Example data is present in [example_data](https://github.com/JasonAHendry/savanna/tree/master/example_data) and example scripts are present in [scripts](https://github.com/JasonAHendry/savanna/tree/master/scripts).
 
 ## Development
 #### Creating a new analysis module
