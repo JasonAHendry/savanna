@@ -16,7 +16,6 @@ log = logging.getLogger()
 class PlasmoPipeline(Pipeline):
 
     reference = PlasmodiumFalciparum3D7()
-    hs_reference = HomoSapiens()
     parameter_path = f"{ROOT_DIR}/configs/parameters/default.yml"
 
     def run(self):
@@ -34,16 +33,6 @@ class PlasmoPipeline(Pipeline):
         self._count_fastqs()
         self._map_to_reference(self.reference)
         self._calc_bamstat(reference=self.reference)
-
-        log.info("Remapping unmapped reads to H.s. reference.")
-        hs_mapper = ExperimentMapUnmappedToHSapiens(
-            expt_dirs=self.expt_dirs,
-            metadata=self.metadata,
-            **self.kwargs
-        )
-        hs_mapper.run()
-        log.info("Done.")
-        self._calc_bamstat(reference=self.hs_reference)
         
         log.info("Filtering BAM file")
         log.info(f"  Reference: {self.reference.name}")
@@ -89,4 +78,4 @@ class PlasmoPipeline(Pipeline):
             expt_filter.run()
             log.info("Done with tool.")
         log.info("Done with all variant calling.")
-            
+        
