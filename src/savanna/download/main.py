@@ -1,4 +1,3 @@
-from savanna.util.logging_config import LoggingFascade
 from .downloader import ReferenceDownloader
 from .references import REFERENCE_COLLECTION
 from .corrections import DHPS, update_reference_genome
