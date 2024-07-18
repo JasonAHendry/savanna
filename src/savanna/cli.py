@@ -18,6 +18,7 @@ class OrderedGroup(click.Group):
 
 
 @click.group(cls=OrderedGroup)
+@click.version_option(message="%(prog)s-v%(version)s")
 def cli():
     """
     Analyse targeted nanopore sequencing data for genomic
