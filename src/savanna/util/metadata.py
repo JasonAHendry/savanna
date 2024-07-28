@@ -92,7 +92,7 @@ class MetadataTableParser:
     REQUIRED_COLUMNS = ["barcode", "sample_id"]
     UNIQ_COLUMNS = ["barcode"] # allowing duplicated 'sample_id' for now.
 
-    def __init__(self, metadata_csv: str, include_unclassified: bool = True):
+    def __init__(self, metadata_csv: str, include_unclassified: bool = False):
         """
         Load and sanity check the metadata table
 
