@@ -1,6 +1,6 @@
 import os
-from abc import ABC, abstractmethod
 from savanna.util.exceptions import ReferenceGenomeMissingError
+from abc import ABC, abstractmethod
 
 
 # ================================================================
@@ -22,7 +22,18 @@ class Reference(ABC):
         self.gff_url = None
         self.fasta_path = None
         self.gff_path = None
-        self.gff_standard_path = None
+
+    @property
+    def gff_standard_path(self):
+        if self.gff_path is None:
+            return None
+        return self.gff_path.replace(".gff", ".standard.gff")
+    
+    @property
+    def fasta_mask_path(self):
+        if self.fasta_path is None:
+            return None
+        return self.fasta_path.replace(".fasta", ".lowcomplexity_mask.bed")
 
     @abstractmethod
     def set_fasta(self) -> None:
@@ -49,19 +60,25 @@ class Reference(ABC):
         if not self.exists_locally(self.fasta_path):
             raise ReferenceGenomeMissingError(
                 f"For the reference genome '{self.name}'"
-                + f" the FASTA file is missing. Please run `savanna gather -r {self.name}`."
+                + f" the FASTA file is missing. Please run `nomadic download -r {self.name}`."
             )
 
         if not self.exists_locally(self.gff_path):
             raise ReferenceGenomeMissingError(
                 f"For the reference genome '{self.name}'"
-                + f" the GFF file is missing. Please run `savanna gather -r {self.name}`."
+                + f" the GFF file is missing. Please run `nomadic download -r {self.name}`."
             )
 
         if not self.exists_locally(self.gff_standard_path):
             raise ReferenceGenomeMissingError(
                 f"For the reference genome '{self.name}'"
-                + f" the GFF file is missing. Please run `savanna gather -r {self.name}`."
+                + f" the standardised GFF file is missing. Please run `nomadic download -r {self.name}`."
+            )
+        
+        if not self.exists_locally(self.fasta_mask_path):
+            raise ReferenceGenomeMissingError(
+                f"For the reference genome '{self.name}'"
+                + f" the masked FASTA file is missing. Please run `nomadic download -r {self.name}`."
             )
 
 
@@ -94,7 +111,6 @@ class PlasmoDB(Reference):
         gff_fn = f"PlasmoDB-{self.release}_{self.species}{self.strain}.gff"
         self.gff_url = f"{self.data_url}/gff/data/{gff_fn}"
         self.gff_path = f"resources/{self.source}/{self.release}/{gff_fn}"
-        self.gff_standard_path = f"resources/{self.source}/{self.release}/{gff_fn.replace('gff','standard.gff')}"
 
 
 class VectorBase(Reference):
@@ -126,31 +142,6 @@ class VectorBase(Reference):
         gff_fn = f"VectorBase-{self.release}_{self.species}{self.strain}.gff"
         self.gff_url = f"{self.data_url}/gff/data/{gff_fn}"
         self.gff_path = f"resources/{self.source}/{self.release}/{gff_fn}"
-        self.gff_standard_path = f"resources/{self.source}/{self.release}/{gff_fn.replace('gff','standard.gff')}"
-
-
-class ENA(Reference):
-    """
-    Encapsulate reference sequence downloads from the European Nucleotide Archive
-
-    """
-
-    source = "ena"
-    source_url = "ftp://ftp.ebi.ac.uk/pub/databases/ena/wgs/public/flr"
-
-    def __init__(self, wgs_id):
-        self.wgs_id = wgs_id
-        self.set_fasta()
-        self.set_gff()
-
-    def set_fasta(self):
-        fasta_fn = f"{self.wgs_id}.fasta.gz"
-        self.fasta_url = f"{self.source_url}/{fasta_fn}"
-        self.fasta_path = f"resources/{self.source}/{fasta_fn}"
-
-    def set_gff(self):
-        self.gff_url = None
-        self.gff_path = None
 
 
 # ===============================================================
@@ -195,6 +186,30 @@ class AnophelesGambiaePEST(VectorBase):
         super().__init__(species="Agambiae", strain="PEST")
 
 
+class AnophelesArabiensis(VectorBase):
+    def __init__(self):
+        self.name = "AaDONGOLA2021"
+        super().__init__(species="Aarabiensis", strain="DONGOLA2021")
+
+
+class AnophelesColuzzi(VectorBase):
+    def __init__(self):
+        self.name = "AcolN3"
+        super().__init__(species="Acoluzzii", strain="AcolN3")
+
+
+class AnophelesFunestus(VectorBase):
+    def __init__(self):
+        self.name = "AfunGA1"
+        super().__init__(species="Afunestus", strain="AfunGA1")
+
+
+class AnophelesStephensi(VectorBase):
+    def __init__(self):
+        self.name = "AsUCISS2018"
+        super().__init__(species="Astephensi", strain="UCISS2018")
+
+
 class HomoSapiens(Reference):
     """
     Download the Homo Sapiens reference genome from
@@ -204,7 +219,7 @@ class HomoSapiens(Reference):
 
     source = "ensembl"
     source_url = "https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/"
-    source_url += "000/001/405/GCA_000001405.29_GRCh38.p14/"
+    source_url += "000/001/405/GCA_000001405.15_GRCh38/"
 
     def __init__(self):
         self.name = "Hs"
@@ -220,14 +235,11 @@ class HomoSapiens(Reference):
         gff_fn = "GCA_000001405.29_GRCh38.p14_genomic.gff.gz"
         self.gff_url = f"{self.source_url}/{gff_fn}"
         self.gff_path = f"resources/{self.source}/{gff_fn}"
-        self.gff_standard_path = (
-            f"resources/{self.source}/{gff_fn.replace('gff','standard.gff')}"
-        )
 
 
 # ================================================================
-# Reference collection
-#
+# Collection
+# Note they are already initialised
 # ================================================================
 
 
@@ -240,6 +252,10 @@ REFERENCE_COLLECTION = {
         PlasmodiumOvale(),
         PlasmodiumMalariae(),
         AnophelesGambiaePEST(),
+        AnophelesArabiensis(),
+        AnophelesColuzzi(),
+        AnophelesFunestus(),
+        AnophelesStephensi(),
         HomoSapiens(),
     ]
 }
