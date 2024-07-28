@@ -80,9 +80,10 @@ class ExperimentVcfFilter(ExperimentAnalysis):
             "bcftools view"
             " --apply-filters PASS"
             " --min-alleles 2"
+            " --max-alleles 2"
             f" -Oz -o {filtered_vcf}"
             f" {output_vcf}"
-        )
+        ) # to biallelic SNPs for now
         subprocess.run(cmd, shell=True, check=True)
 
         # Annotate
