@@ -12,6 +12,7 @@ conda activate savanna
 
 savanna analyse \
   -e {expt_name} \
+  -f {fastq_dir} \
   -m {metadata} \
   -r {regions} \
   -p {pipeline} \
