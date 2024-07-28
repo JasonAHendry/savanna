@@ -11,6 +11,7 @@ from savanna.analyse.map.experiment import ExperimentMapToReference
 from savanna.analyse.bedcov.experiment import ExperimentBedCoverage
 from savanna.analyse.bamstats.experiment import ExperimentBamStats
 from savanna.analyse.bamfilt.experiment import ExperimentFilterBAM
+from savanna.analyse.exptqc.summary import SampleQualityControl
 
 
 log = logging.getLogger()
@@ -77,14 +78,14 @@ class Pipeline(ABC):
         mapper.run()
         log.info("Done.")
 
-    def _filter_bam(self, reference: Reference) -> None:
-        log.info("Filtering BAM file")
-        log.info(f"  Reference: {reference.name}")
-        filter = ExperimentFilterBAM(
-            self.expt_dirs, self.metadata, self.reference, **self.kwargs
-        ) # so they would get passed here
-        filter.run()
-        log.info("Done.")
+    # def _filter_bam(self, reference: Reference) -> None:
+    #     log.info("Filtering BAM file")
+    #     log.info(f"  Reference: {reference.name}")
+    #     filter = ExperimentFilterBAM(
+    #         self.expt_dirs, self.metadata, self.reference, **self.kwargs
+    #     ) # so they would get passed here
+    #     filter.run()
+    #     log.info("Done.")
 
     def _calc_bamstat(self, reference: Reference) -> None:
         log.info("Calculating mapping statistics")
@@ -103,5 +104,18 @@ class Pipeline(ABC):
             self.expt_dirs, self.metadata, self.regions, reference, **self.kwargs
         )
         bedcov.run()
+        log.info("Done.")
+
+    def _run_experiment_qc(self):
+        log.info("Performing sample quality control.")
+        sample_qc = SampleQualityControl(
+            expt_dirs=self.expt_dirs,
+            metadata=self.metadata
+        )
+        sample_qc.run()
+        log.info("Done.")
+
+
+    
 
 
