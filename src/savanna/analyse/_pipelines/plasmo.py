@@ -96,7 +96,10 @@ class PlasmoPipeline(Pipeline):
         self._calc_bamstat(self.reference)
         self._filter_bam(self.reference)
         self._calc_bedcov(self.reference)
-        self._run_experiment_qc()
         self._call_variants()
 
+        # Summary analyses only run if we are
+        # not running for a single barcode
+        if self.barcode is None:
+            self._run_experiment_qc()
 
