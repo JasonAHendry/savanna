@@ -99,15 +99,19 @@ class ExperimentDirectories:
     def _populate_metadata_dir(
         self, metadata: MetadataTableParser, regions: RegionBEDParser
     ) -> None:
+        """
+        Move metadata CSV and regions BED into the metadata directory,
+        and store their paths as attributes
+        """
         if metadata is not None:
-            metadata_csv = f"{self.metadata_dir}/{os.path.basename(metadata.csv)}"
-            if not os.path.exists(metadata_csv):
-                metadata.df.to_csv(metadata_csv, index=False)
+            self.metadata_csv = f"{self.metadata_dir}/{os.path.basename(metadata.csv)}"
+            if not os.path.exists(self.metadata_csv):
+                metadata.df.to_csv(self.metadata_csv, index=False)
 
         if regions is not None:
-            regions_bed = f"{self.metadata_dir}/{os.path.basename(regions.path)}"
-            if not os.path.exists(regions_bed):
-                shutil.copy(regions.path, regions_bed)
+            self.regions_bed = f"{self.metadata_dir}/{os.path.basename(regions.path)}"
+            if not os.path.exists(self.regions_bed):
+                shutil.copy(regions.path, self.regions_bed)
 
     def _create_barcode_dirs_dict(self, metadata: MetadataTableParser) -> None:
         if metadata is None:

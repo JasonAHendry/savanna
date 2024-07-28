@@ -35,7 +35,6 @@ class ExperimentVariantCaller(ExperimentAnalysis):
         )
 
     def _summarise(self):
-        """Merge the VCF files and convert to a TSV"""
         pass
 
     def _plot(self):

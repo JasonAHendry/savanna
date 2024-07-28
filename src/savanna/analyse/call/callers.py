@@ -72,12 +72,14 @@ class BcfTools(VariantCaller):
     def __init__(
         self,
         fasta_path: str,
-        mpileup_setting: str = "ont",
+        min_basequal: int = 12,
+        homopolymer_coeff: int = 100,
         max_depth: int = 10_000,
         mutation_rate_prior: float = 0.01,
     ) -> None:
         self.fasta_path = fasta_path
-        self.mpileup_setting = mpileup_setting
+        self.min_basequal = min_basequal
+        self.homopolymer_coeff = homopolymer_coeff
         self.max_depth = max_depth
         self.mutation_rate_prior = mutation_rate_prior
 
@@ -107,12 +109,13 @@ class BcfTools(VariantCaller):
         ont:         -B -Q5 --max-BQ 30 -I [also try eg |bcftools call -P0.01
         """
         cmd_pileup = (
-            "bcftools mpileup -Ou"
-            f" -X {self.mpileup_setting}"
+            "bcftools mpileup -I -B --max-BQ 30" 
+            f" -Q {self.min_basequal}" 
+            f" -h {self.homopolymer_coeff}"
             f" --annotate {self.ANNOTATE_MPILEUP}"
             f" --max-depth {self.max_depth}"
             f" -f {self.fasta_path}"
-            f" {bam_path}"
+            f" -Ou {bam_path}"
         )
 
         cmd_call = (

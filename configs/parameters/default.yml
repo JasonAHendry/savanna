@@ -3,7 +3,8 @@ bam_filter:
   exclude_flags: "0x904"
 call:
   bcftools:
-    mpileup_setting: "ont"
+    min_basequal: 12
+    homopolymer_coeff: 100
     max_depth: 10000
     mutation_rate_prior: 0.01
 call_filter:
