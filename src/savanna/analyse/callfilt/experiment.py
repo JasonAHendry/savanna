@@ -48,6 +48,7 @@ class ExperimentVcfFilter(ExperimentAnalysis):
             barcode_name,
             expt_dirs=self.expt_dirs,
             regions=self.regions,
+            reference=self.reference,
             caller_name=self.caller_name,
             **self.filter_params
         )
@@ -64,7 +65,7 @@ class ExperimentVcfFilter(ExperimentAnalysis):
         """
         # Collect VCF paths
         vcfs = []
-        for b, (success, outputs) in self.results.items():
+        for _, (_, outputs) in self.results.items():
             filtered_vcf = outputs[0] 
             vcfs.append(filtered_vcf)
 

@@ -1,8 +1,10 @@
+import os
 import subprocess
 from typing import List
 from savanna.analyse._interfaces import BarcodeAnalysis
 from savanna.util.dirs import ExperimentDirectories
 from savanna.util.regions import RegionBEDParser
+from savanna.download.references import Reference
 from savanna.wrappers import bcftools
 
 
@@ -14,6 +16,7 @@ class BarcodeVcfFilter(BarcodeAnalysis):
         barcode_name: str,
         expt_dirs: ExperimentDirectories,
         regions: RegionBEDParser,
+        reference: Reference,
         caller_name: str,  # for now, only to get VCF path... need a better strategy
         to_snps: bool = True,
         to_biallelic: bool = True,
@@ -23,6 +26,7 @@ class BarcodeVcfFilter(BarcodeAnalysis):
     ):
         # Inputs
         self.regions = regions
+        self.reference = reference
         self.caller_name = caller_name
 
         # Parameters
@@ -41,6 +45,41 @@ class BarcodeVcfFilter(BarcodeAnalysis):
     def _define_outputs(self) -> List[str]:
         self.filtered_vcf = self.vcf_path.replace(".vcf.gz", ".filtered.vcf.gz")
         return [self.filtered_vcf]
+    
+    def _get_lowcomplexity_filter_command(self) -> str:
+        """
+        Construct the command for low-complexity filtering
+        of a VCF
+
+        TODO:
+        * Optional flag
+        * Allow for input / outputs
+
+        """
+
+        bed_mask_path = self.expt_dir.regions_bed.replace(".bed", ".lowcomplexity_mask.bed")
+        if not os.path.exists(bed_mask_path):
+            print("Creating low-complexity mask for amplicons...")
+            cmd = (
+                "bedtools intersect"
+                f" -a {self.reference.fasta_mask_path}"
+                f" -b {self.expt_dir.regions_bed}"
+                f" -wa > {bed_mask_path}"
+            )
+            subprocess.run(cmd, shell=True, check=True)
+            print("Done.")
+
+        # Masking command
+        cmd = (
+            "bcftools filter"
+            " --mode +"
+            " --soft-filter LowComplexity"
+            " --set-GTs ."
+            f" --mask-file {bed_mask_path}"
+            " -Ou -"
+        )
+
+        return cmd
 
     def _run(self):
         """
@@ -63,9 +102,10 @@ class BarcodeVcfFilter(BarcodeAnalysis):
             " --soft-filter LowDepth"
             " --set-GTs ."
             f" --exclude 'FORMAT/DP < {self.min_depth}'"
-            " --output-type v"
-            " - "
+            " -Ou - "
         )
+
+        cmd_lowcomplexity_filter = self._get_lowcomplexity_filter_command()
 
         cmd_qual_filter = (
             "bcftools filter"
@@ -73,11 +113,10 @@ class BarcodeVcfFilter(BarcodeAnalysis):
             " --soft-filter LowQual"
             " --set-GTs ."
             f" --exclude 'QUAL < {self.min_qual}'"
-            " --output-type z"
-            f" -o {self.filtered_vcf} - "
+            f" -Oz -o {self.filtered_vcf} - "
         )
 
-        cmd = f"{cmd_view} | {cmd_depth_filter} | {cmd_qual_filter}"
+        cmd = f"{cmd_view} | {cmd_depth_filter} | {cmd_lowcomplexity_filter} |{cmd_qual_filter}"
         subprocess.run(cmd, shell=True, check=True)
 
         # Index
