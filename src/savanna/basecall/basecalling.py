@@ -3,6 +3,14 @@ from savanna.util.dirs import ROOT_DIR, produce_dir
 
 
 class Dorado:
+    """
+    Basecalling using `dorado`
+
+    Usage note:
+        > "--no-trim  Skip trimming of barcodes, adapters, and primers. 
+        If option is not chosen, trimming of all three is enabled."
+
+    """
 
     MODEL_DIR = produce_dir(ROOT_DIR, "configs", "dorado")
 
@@ -29,7 +37,7 @@ class Dorado:
         model: str,
         pod5_dir: str,
         output_fastq: str,
-        min_qscore: int = 10,
+        min_qscore: int = 9,
         dry_run: bool = False,
     ):
 
@@ -40,6 +48,7 @@ class Dorado:
         cmd += " --device 'cuda:0'"
         cmd += f" --min-qscore {min_qscore}"
         cmd += " --emit-fastq"
+        cmd += " --no-trim"
         cmd += f" --recursive > {output_fastq}"
 
         if dry_run:
