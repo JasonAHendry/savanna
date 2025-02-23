@@ -125,7 +125,7 @@ class DoradoDemux(Demultiplexer):
         reads = self._get_all_fastq()
 
         cmd = "dorado demux"
-        cmd += f" --kit_name {self.barcode_kit}"
+        cmd += f" --kit-name {self.barcode_kit}"
         if both_ends:
             cmd += f" --barcode-both-ends"
         if strict:
