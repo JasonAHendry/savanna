@@ -132,7 +132,7 @@ class DoradoDemux(Demultiplexer):
             warnings.warn("`--strict` is not yet implemented for `dorado demux`.")
         if not trim_barcodes:
             cmd += f" --no-trim"
-        cmd += f" {output_dir}"
+        cmd += f" --output-dir {output_dir}"
         cmd += f" {reads}"
 
         if dry_run:
