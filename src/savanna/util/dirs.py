@@ -1,5 +1,6 @@
 import os
 import shutil
+import time
 from pathlib import Path
 
 from .metadata import MetadataTableParser
@@ -29,11 +30,15 @@ def produce_dir(*args):
     # Define directory path
     dir_name = os.path.join(*args)
 
-    # Create if doesn't exist
-    if not os.path.exists(dir_name):
-        os.makedirs(dir_name)
-
-    return dir_name
+    # Create directory; handle possible file-system latency
+    n_tries = 5
+    for _ in range(n_tries):
+        try:
+            os.makedirs(dir_name, exist_ok=True)
+            return dir_name
+        except FileExistsError:
+            time.sleep(0.1)
+    raise FileExistsError(f"Failed to create directory {dir_name} despite {n_tries} attempts.")
 
 
 class ExperimentDirectories:
@@ -114,6 +119,10 @@ class ExperimentDirectories:
                 shutil.copy(regions.path, self.regions_bed)
 
     def _create_barcode_dirs_dict(self, metadata: MetadataTableParser) -> None:
+        """
+        This can lead to race conditios on a cluster;
+        do I need it?
+        """
         if metadata is None:
             return None
         return {b: produce_dir(self.barcodes_dir, b) for b in metadata.barcodes}
