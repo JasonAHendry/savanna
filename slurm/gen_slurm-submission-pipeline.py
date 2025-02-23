@@ -97,7 +97,7 @@ def main(
     print(f"  Include unclassified? {include_unclassified}")
 
     # Parse inputs
-    _ = ExperimentDirectories(
+    expt_dirs = ExperimentDirectories(
         expt_name
     )  # builds the output  directories; can help with races
     metadata = MetadataTableParser(metadata_csv, include_unclassified)
@@ -119,10 +119,12 @@ def main(
         min_qscore=10,
     )
 
+    # Both of below require the FASTQ directory specified
     load_format_write(
         slurm_analyse,
         output_dir / slurm_analyse.name,
         expt_name=expt_name,
+        fastq_dir=expt_dirs.demux_dir,
         metadata=metadata_csv,
         regions=region_bed,
         pipeline=pipeline,
@@ -133,6 +135,7 @@ def main(
         slurm_summary,
         output_dir / slurm_summary.name,
         expt_name=expt_name,
+        fastq_dir=expt_dirs.demux_dir,
         metadata=metadata_csv,
         regions=region_bed,
         pipeline=pipeline,
